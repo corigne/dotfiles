@@ -1,0 +1,6 @@
+.DS_Store
+.gitconfig
+.gitmodules
+
+backup/
+.git/

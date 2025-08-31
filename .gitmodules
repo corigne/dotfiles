@@ -1,9 +1,3 @@
-[submodule ".config/dot-tmux"]
-	path = .config/dot-tmux
-	url = https://github.com/corigne/dot-tmux
-[submodule ".config/dot-neovim"]
-	path = .config/dot-neovim
-	url = https://github.com/corigne/dot-neovim
 [submodule ".config/nvim"]
 	path = .config/nvim
 	url = git@github.com:corigne/dot-neovim.git
