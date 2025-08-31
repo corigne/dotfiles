@@ -1,7 +1,8 @@
+README.md
 .gitconfig
 .gitignore
 .gitmodules
-.git/
+.git
 
 .DS_Store
 backup/
