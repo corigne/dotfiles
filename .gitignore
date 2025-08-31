@@ -1,3 +1,4 @@
 .history
 .local
 .cache
+.config/fish/fish_variables
