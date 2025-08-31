@@ -1,0 +1,62 @@
+@import "frappe.css";
+
+* {
+	background-image: none;
+	box-shadow: none;
+}
+
+window {
+	background-color: alpha(@crust, 0.65);
+}
+
+button {
+    margin: 15em 1em 15em 1em;
+    color: @text;
+    background-color: @mantle;
+
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: 10%;
+
+    border-color: @blue;
+    border-style: solid;
+    border-width: 4px;
+    border-radius: 2ex;
+
+    text-decoration-color: @text;
+    font-size: 3ex;
+}
+
+button:focus {
+    background-color: @surface0;
+    border-color: @pink;
+}
+
+button:active, button:hover {
+    background-color: @surface2;
+    border-color: @pink;
+}
+
+#lock {
+    background-image: image(url("/usr/share/wlogout/icons/lock.png"), url("/usr/local/share/wlogout/icons/lock.png"));
+}
+
+#logout {
+    background-image: image(url("/usr/share/wlogout/icons/logout.png"), url("/usr/local/share/wlogout/icons/logout.png"));
+}
+
+#suspend {
+    background-image: image(url("/usr/share/wlogout/icons/suspend.png"), url("/usr/local/share/wlogout/icons/suspend.png"));
+}
+
+#hibernate {
+    background-image: image(url("/usr/share/wlogout/icons/hibernate.png"), url("/usr/local/share/wlogout/icons/hibernate.png"));
+}
+
+#shutdown {
+    background-image: image(url("/usr/share/wlogout/icons/shutdown.png"), url("/usr/local/share/wlogout/icons/shutdown.png"));
+}
+
+#reboot {
+    background-image: image(url("/usr/share/wlogout/icons/reboot.png"), url("/usr/local/share/wlogout/icons/reboot.png"));
+}

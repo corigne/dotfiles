@@ -1,0 +1,90 @@
+{
+    "layer": "top", // Waybar at top layer
+    "position": "top", // Waybar position (top|bottom|left|right)
+    "margin-top": 5,
+    "margin-left": 16,
+    "margin-right": 16,
+    "height": 30,
+    // Choose the order of the modules
+    "modules-left": ["tray", "hyprland/workspaces", "hyprland/submap"],
+    "modules-center": ["custom/music"],
+    "modules-right": ["temperature","memory","cpu", "custom/gpu-usage",
+        "pulseaudio", "clock", "date", "idle_inhibitor", "custom/lock",
+        "custom/power"],
+    "wlr/workspaces": {
+         "disable-scroll": true,
+         "sort-by-name": true,
+         "format": " {icon} ",
+         "format-icons": {
+             "default": "",
+         },
+     },
+    "tray": {
+        "icon-size": 20,
+        "spacing": 12
+    },
+    "cpu": {
+        "format": " {usage}%",
+        //"tooltip": false
+    },
+    "memory": {
+        "format": " {}%"
+    },
+    "temperature": {
+        "thermal-zone": 2,
+        "hwmon-path": "/sys/class/hwmon/hwmon2/temp3_input",
+        "critical-threshold": 80,
+        "format-critical": "{icon} {temperatureC}°C",
+        "format": "{icon} {temperatureC}°C",
+        "format-icons": ["", "", ""]
+    },
+    "custom/gpu-usage": {
+        "format-icons": "󰾲 ",
+        "format": "<span font='18'>{icon}</span><span rise='4000'>{0}</span> ",
+        "exec": "gpu-usage-waybar",
+        "return-type": "json",
+        "on-click": "ghostty -e nvtop",
+        "icon-size": 24,
+    },
+    "custom/music": {
+        "format": "  {}",
+        "escape": true,
+        "interval": 5,
+        "tooltip": false,
+        "exec": "playerctl metadata --format='{{ title }}'",
+        "on-click": "playerctl play-pause",
+        "max-length": 50
+    },
+    "clock": {
+        "timezone": "",
+        "tooltip-format": "<big>{:%Y %B}</big>\n<tt><small>{calendar}</small></tt>",
+        "format": "  {:%H:%M :: %Y-%m-%d}"
+    },
+    "pulseaudio": {
+        // "scroll-step": 1, // %, can be a float
+        "format": "{icon} {volume}%",
+        "format-muted": "  {volume}%",
+        "format-icons": {
+            "default": ["", "", " "]
+        },
+        "on-click": "pavucontrol"
+    },
+    "idle_inhibitor": {
+        "format": "{icon}",
+        "format-icons": {
+            "activated": " ",
+            "deactivated": " "
+        },
+        "timeout": 240
+    },
+    "custom/lock": {
+        "tooltip": false,
+        "on-click": "hyprlock",
+        "format": " "
+    },
+    "custom/power": {
+        "format": "󰐥 ",
+        "tooltip": false,
+        "on-click": "wlogout --protocol layer-shell -b 5 &"
+    }
+}

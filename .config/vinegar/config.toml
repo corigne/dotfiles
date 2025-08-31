@@ -1,0 +1,4 @@
+[studio]
+renderer = "D3D11"
+dxvk = true
+webview= ""

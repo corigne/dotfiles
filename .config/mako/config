@@ -1,0 +1,32 @@
+# General
+#########
+
+sort=-time
+layer=overlay
+default-timeout=7500
+ignore-timeout=1
+
+# Visual
+########
+font=Hack 10
+width=475
+height=200
+border-size=2
+border-radius=8
+max-icon-size=128
+#icons=0
+
+# Colors
+########
+background-color=#303446
+text-color=#c6d0f5
+border-color=#8caaee
+progress-color=over #414559
+
+[urgency=high]
+border-color=#ef9f76
+default-timeout=0
+
+[category=mpd]
+default-timeout=3500
+group-by=category

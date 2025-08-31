@@ -1,0 +1,65 @@
+{
+    //splitv split cont w/ 2 children
+    "border": "normal",
+    "floating": "auto_off",
+    "layout": "splith",
+    "marks" : [],
+    "percent" : 1,
+    "type": "con",
+    "nodes": [
+        {
+            "border": "pixel",
+            "current_border_width": 2,
+            "floating": "auto_off",
+            "marks": [],
+            "name": "/bin/bash",
+            "percent": 0.65,
+            "swallows": [
+               {
+                "title": "^nvim$"
+               }
+            ],
+            "type": "con"
+        },
+        {
+            // splith split container with 3 children
+            "border": "normal",
+            "floating": "auto_off",
+            "layout": "splitv",
+            "marks": [],
+            "percent": 0.35,
+            "type": "con",
+            "nodes": [
+                {
+                    "border": "pixel",
+                    "current_border_width": 2,
+                    "floating": "auto_off",
+                    "layout": "splitv",
+                    "marks": [],
+                    "name": "/bin/bash",
+                    "percent": 0.7,
+                    "swallows": [
+                       {
+                        "title": "^zsh$"
+                       }
+                    ],
+                    "type": "con"
+                },
+                {
+                    "border": "pixel",
+                    "current_border_width": 2,
+                    "floating": "auto_off",
+                    "marks": [],
+                    "name": "/bin/bash",
+                    "percent": 0.3,
+                    "swallows": [
+                       {
+                        "title": "tty-clock"
+                       }
+                    ],
+                    "type": "con"
+                }
+            ]
+        }
+    ]
+}

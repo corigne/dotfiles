@@ -1,0 +1,21 @@
+// vim:ts=4:sw=4:et
+{
+    "border": "pixel",
+    "current_border_width": 2,
+    "floating": "auto_off",
+    "geometry": {
+       "height": 1391,
+       "width": 2538,
+       "x": 0,
+       "y": 0
+    },
+    "marks": [],
+    "name": "(15) YouTube — Mozilla Firefox",
+    "percent": 0.5,
+    "swallows": [
+       {
+        "class": "^firefox$"
+       }
+    ],
+    "type": "con"
+}
