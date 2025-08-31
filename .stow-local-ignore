@@ -1,6 +1,7 @@
-.DS_Store
 .gitconfig
+.gitignore
 .gitmodules
-
-backup/
 .git/
+
+.DS_Store
+backup/
