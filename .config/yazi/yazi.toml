@@ -108,6 +108,7 @@ spotters = [
 ]
 preloaders = [
 	# Image
+	{ mime = "image/{gif}", run = "magick" },
 	{ mime = "image/{avif,hei?,jxl}", run = "magick" },
 	{ mime = "image/svg+xml", run = "svg" },
 	{ mime = "image/*", run = "image" },
