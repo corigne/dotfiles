@@ -1,5 +1,4 @@
 [studio]
-#renderer = "D3D11"
-#dxvk = true
-renderer = "vulkan"
+renderer = "D3D11"
+dxvk = true
 webview= ""
