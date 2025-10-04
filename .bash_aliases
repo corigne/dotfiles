@@ -17,3 +17,4 @@ alias wtftree='du -ha | grep -E "^[0-9]+\.?[0-9]?G" | sort -n'
 alias logout='loginctl terminate-user $USER'
 
 alias prepare_slideshows='~/Scripts/prepare_sfw_slideshow.sh;~/Scripts/prepare_home_slideshow.sh;~/Scripts/prepare_animated_slideshow.sh'
+alias vlime='sbcl --load ~/.local/share/nvim/lazy/vlime/lisp/start-vlime.lisp'
