@@ -1,7 +1,9 @@
-if status is-login && test -z "$DISPLAY" && test -z "$WAYLAND_DISPLAY" && test -z "$SSH_CONNECTION"
-    if uwsm check may-start
-        exec uwsm start hyprland-uwsm.desktop
-    end
+if status is-login && 
+    test -z "$DISPLAY" && 
+    test -z "$WAYLAND_DISPLAY" && 
+    test -z "$SSH_CONNECTION"
+
+    Hyprland &> /dev/null
 end
 
 if status is-interactive
