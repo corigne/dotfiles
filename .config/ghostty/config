@@ -54,3 +54,6 @@ window-padding-y = 6
 
 window-save-state = never
 working-directory = home
+
+shell-integration-features = sudo
+shell-integration-features = ssh-terminfo
