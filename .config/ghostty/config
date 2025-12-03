@@ -44,8 +44,8 @@ resize-overlay-duration = 1s 50ms
 window-inherit-working-directory = false
 
 font-family = FiraCode Nerd Font
-font-size = 11
-font-feature = "calt" on
+font-size = 10
+font-feature = "calt" off
 font-feature = "liga" on
 font-feature = "ss02" on
 
