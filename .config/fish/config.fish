@@ -3,7 +3,7 @@ if status is-login &&
     test -z "$WAYLAND_DISPLAY" && 
     test -z "$SSH_CONNECTION"
 
-    Hyprland &> /dev/null
+    start-hyprland &> /dev/null
 end
 
 if status is-interactive
