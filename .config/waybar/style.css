@@ -1,7 +1,7 @@
 @import "frappe.css";
 * {
     /* `otf-font-awesome` is required to be installed for icons */
-    font-family: 'Hack Nerd Font', FontAwesome, sans-serif, monospace;
+    font-family: 'Maple Mono NF CN', FontAwesome, sans-serif, monospace;
     font-size: 14px;
     color: @text;
 }
@@ -9,12 +9,12 @@
 window#waybar {
     padding-left: 1ex;
     padding-right: 1ex;
-    border-radius: 1em;
+    border-radius: 0.8ex;
 
     background-color: alpha(@base, 0.9);
     color: @text;
 
-    border: 1px solid alpha(@overlay1, 0.9);
+    border: 1px solid alpha(@blue, 1.0);
 
     transition-property: background-color;
     transition-duration: .5s;

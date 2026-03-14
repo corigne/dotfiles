@@ -43,7 +43,7 @@
 resize-overlay-duration = 1s 50ms
 window-inherit-working-directory = false
 
-font-family = FiraCode Nerd Font
+font-family = 'Maple Mono NF CN'
 font-size = 10
 font-feature = "calt" off
 font-feature = "liga" on
