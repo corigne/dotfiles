@@ -1,0 +1,25 @@
+{
+  // User-level MCP server definitions.
+  // These are available in every Copilot CLI session regardless of project.
+  // Project-level configs (.mcp.json / .github/mcp.json) take precedence on name conflicts.
+  //
+  // Add servers here via: /mcp add  (in an interactive Copilot session)
+  // or edit this file directly.
+  //
+  // Format reference:
+  //   https://docs.github.com/en/copilot/how-tos/copilot-cli/customize-copilot/add-mcp-servers
+  //
+  // Example — Strale capability API (package security, license checks, etc.)
+  // Requires: npm install -g strale-mcp  &&  STRALE_API_KEY set via pass
+  //
+  // "mcpServers": {
+  //   "strale": {
+  //     "command": "npx",
+  //     "args": ["strale-mcp"],
+  //     "env": {
+  //       "STRALE_API_KEY": "${env:STRALE_API_KEY}"
+  //     }
+  //   }
+  // }
+  "mcpServers": {}
+}
