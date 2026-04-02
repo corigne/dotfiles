@@ -1,8 +1,5 @@
-if status is-login && 
-    test -z "$DISPLAY" && 
-    test -z "$WAYLAND_DISPLAY" && 
-    test -z "$SSH_CONNECTION"
-
+if status is-login &&
+    not-in-desktop-environment
     start-hyprland &> /dev/null
 end
 
