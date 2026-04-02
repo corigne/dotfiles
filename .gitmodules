@@ -1,6 +1,8 @@
 [submodule "dot-config/nvim"]
 	path = dot-config/nvim
 	url = git@github.com:corigne/dot-neovim.git
+	branch = main
 [submodule "dot-config/tmux"]
 	path = dot-config/tmux
 	url = git@github.com:corigne/dot-tmux.git
+	branch = main

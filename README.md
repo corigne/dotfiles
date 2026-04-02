@@ -16,6 +16,26 @@ Authored by Nathan Jodoin
 The `--dotfiles` flag makes stow translate `dot-` prefixed names to `.` in the
 target, e.g. `dot-config/fish/config.fish` → `~/.config/fish/config.fish`.
 
+### Updating submodules (nvim, tmux)
+
+Pull the latest commits from each submodule's `main` branch, then record the
+updated refs in the parent repo:
+
+```bash
+# From ~/.dotfiles
+git submodule update --remote --merge
+git add dot-config/nvim dot-config/tmux
+git commit -m "Bump submodules to latest main"
+git push
+```
+
+On another machine, pull everything including updated submodule refs:
+
+```bash
+git pull
+git submodule update --init --recursive
+```
+
 ---
 
 ## Repository layout
