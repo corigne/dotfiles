@@ -26,3 +26,4 @@
 - Never commit secrets, tokens, or credentials
 - Never touch `.env*`, `*.secret`, or `~/.password-store/`
 - Do not suggest `oh-my-zsh`, heavy shell frameworks, or GUI-only tools
+- Do not add `Co-authored-by` trailers to git commits
