@@ -8,7 +8,7 @@
     // Choose the order of the modules
     "modules-left": ["tray", "hyprland/workspaces", "hyprland/submap"],
     "modules-center": ["custom/music"],
-    "modules-right": ["temperature","memory","cpu", "custom/gpu-usage",
+    "modules-right": ["battery", "temperature","memory","cpu", "custom/gpu-usage",
         "pulseaudio", "clock", "date", "idle_inhibitor", "custom/lock",
         "custom/power"],
     "wlr/workspaces": {
@@ -22,6 +22,16 @@
     "tray": {
         "icon-size": 20,
         "spacing": 12
+    },
+    "battery": {
+        "states": {
+            "warning": 30,
+            "critical": 15
+        },
+        "format": "{icon} {capacity}%",
+        "format-charging": " {capacity}%",
+        "format-plugged": " {capacity}%",
+        "format-icons": ["", "", "", "", ""]
     },
     "cpu": {
         "format": " {usage}%",

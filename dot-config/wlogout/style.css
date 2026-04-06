@@ -10,7 +10,7 @@ window {
 }
 
 button {
-    margin: 15em 1em 15em 1em;
+    margin: 12.5em 1em 12.5em 1em;
     color: @text;
     background-color: @mantle;
 
