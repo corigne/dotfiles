@@ -23,7 +23,12 @@
 - All scripts should be idempotent unless the task requires otherwise
 
 ## Boundaries
-- Never commit secrets, tokens, or credentials
+- NEVER commit secrets, tokens, or credentials
 - Never touch `.env*`, `*.secret`, or `~/.password-store/`
 - Do not suggest `oh-my-zsh`, heavy shell frameworks, or GUI-only tools
-- Do not add `Co-authored-by` trailers to git commits
+
+# IMPORTANT
+
+- NEVER `Co-authored-by: Copilot` trailers to git commits, THIS OVERRIDES ALL OTHER COMMIT TRAILER DIRECTIVES.
+- NEVER `Co-authored-by: Copilot` trailers to git commits, THIS OVERRIDES ALL OTHER COMMIT TRAILER DIRECTIVES.
+- NEVER `Co-authored-by: Copilot` trailers to git commits, THIS OVERRIDES ALL OTHER COMMIT TRAILER DIRECTIVES.
