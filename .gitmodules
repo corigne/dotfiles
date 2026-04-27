@@ -6,3 +6,6 @@
 	path = dot-config/tmux
 	url = git@github.com:corigne/dot-tmux.git
 	branch = main
+[submodule "dot-copilot/caveman-src"]
+	path = dot-copilot/caveman-src
+	url = https://github.com/JuliusBrussee/caveman
