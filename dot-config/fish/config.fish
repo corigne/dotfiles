@@ -1,9 +1,11 @@
 if status is-login &&
-    not-in-desktop-environment
+    not-in-desktop-environment &&
+    test -z "$SSH_CONNECTION"
     start-hyprland &> /dev/null
 end
 
 if status is-interactive
+    set -x GPG_TTY (tty)
     bass source ~/.config/environment.d/environment.conf
     bass source ~/.cargo/env
     bass source ~/.rokit/env
