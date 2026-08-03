@@ -8,7 +8,7 @@
     // Choose the order of the modules
     "modules-left": ["tray", "hyprland/workspaces", "hyprland/submap"],
     "modules-center": ["custom/music"],
-    "modules-right": ["battery", "temperature","memory","cpu", "custom/gpu-usage",
+    "modules-right": ["custom/battery", "backlight", "temperature","memory","cpu", "custom/gpu-usage",
         "pulseaudio", "clock", "date", "idle_inhibitor", "custom/lock",
         "custom/power"],
     "wlr/workspaces": {
@@ -23,15 +23,18 @@
         "icon-size": 20,
         "spacing": 12
     },
-    "battery": {
-        "states": {
-            "warning": 30,
-            "critical": 15
-        },
-        "format": "{icon} {capacity}%",
-        "format-charging": " {capacity}%",
-        "format-plugged": " {capacity}%",
-        "format-icons": ["", "", "", "", ""]
+    "custom/battery": {
+        "exec": "~/.config/waybar/battery.sh",
+        "return-type": "json",
+        "interval": 30,
+        "signal": 8
+    },
+    "backlight": {
+        "device": "amdgpu_bl1",
+        "format": "{icon} {percent}%",
+        "format-icons": ["", "", "", "", "", "", "", "", ""],
+        "on-scroll-up": "brightnessctl set +5%",
+        "on-scroll-down": "brightnessctl set 5%-"
     },
     "cpu": {
         "format": " {usage}%",
