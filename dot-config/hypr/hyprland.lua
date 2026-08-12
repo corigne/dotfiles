@@ -106,8 +106,8 @@ hl.config({
     decoration = {
         rounding         = 4,
 
-        active_opacity   = 0.85,
-        inactive_opacity = 0.7,
+        active_opacity   = 0.9,
+        inactive_opacity = 0.725,
 
         shadow           = {
             enabled      = true,
@@ -117,8 +117,8 @@ hl.config({
         },
 
         blur             = {
-            size           = 10,
-            passes         = 3,
+            size           = 16,
+            passes         = 2,
             vibrancy       = 0.1696,
             ignore_opacity = false,
         },
@@ -187,16 +187,20 @@ hl.config({
         sensitivity  = 0,
 
         touchpad     = {
-            disable_while_typing = true,
+            -- DWT disabled globally; P14s Gen 3 i8042 + libinput DWT interaction
+            -- can cause cascade device removal. Per-device override in local.lua.
+            disable_while_typing = false,
             clickfinger_behavior = true,
             tap_to_click         = false,
-            natural_scroll       = true,
+            natural_scroll       = false,
             scroll_factor        = 0.2,
         },
     },
 })
 
 hl.gesture({ fingers = 3, direction = "horizontal", action = "workspace" })
+hl.gesture({ fingers = 3, direction = "up",         action = function() hl.plugin.hyprexpo.expo("toggle") end })
+hl.gesture({ fingers = 3, direction = "down",       action = function() hl.plugin.hyprexpo.kb_confirm() end })
 
 hl.config({
     misc = {
