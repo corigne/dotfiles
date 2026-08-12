@@ -8,7 +8,7 @@ ignore-timeout=1
 
 # Visual
 ########
-font=Hack 10
+font=Maple Mono NF CN 10
 width=475
 height=200
 border-size=2
