@@ -199,8 +199,8 @@ hl.config({
 })
 
 hl.gesture({ fingers = 3, direction = "horizontal", action = "workspace" })
-hl.gesture({ fingers = 3, direction = "up",         action = function() hl.plugin.hyprexpo.expo("toggle") end })
-hl.gesture({ fingers = 3, direction = "down",       action = function() hl.plugin.hyprexpo.kb_confirm() end })
+hl.gesture({ fingers = 3, direction = "up", action = function() hl.plugin.hyprexpo.expo("toggle") end })
+hl.gesture({ fingers = 3, direction = "down", action = function() hl.plugin.hyprexpo.expo("select") end })
 
 hl.config({
     misc = {
