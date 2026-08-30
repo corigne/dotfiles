@@ -1,7 +1,5 @@
 {
-  "allowedUrls": [
-    "https://common-lisp.net"
-  ],
-  "model": "claude-sonnet-4.6",
-  "experimental": true
+  "model": "claude-sonnet-5",
+  "showReasoning": false,
+  "theme": "default"
 }
