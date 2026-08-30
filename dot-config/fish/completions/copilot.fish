@@ -84,7 +84,7 @@ complete -c copilot -l interactive -s i -r -d 'Start interactive mode and automa
 complete -c copilot -l prompt -s p -r -d 'Execute a prompt in non-interactive mode (exits after completion)'
 complete -c copilot -l silent -s s -f -d 'Output only the agent response (no stats), useful for scripting with -p'
 complete -c copilot -l enable-memory -f -d 'Enable memory in prompt mode (disabled by default)'
-complete -c copilot -l model -r -f -a 'auto claude-sonnet-5 claude-fable-5 claude-opus-5 claude-opus-4.8 claude-opus-4.8-fast claude-opus-4.7 claude-sonnet-4.6 claude-opus-4.6 claude-sonnet-4.5 claude-opus-4.5 claude-haiku-4.5 gpt-5.6-sol gpt-5.6-terra gpt-5.6-luna gpt-5.5 gpt-5.4 gpt-5.4-mini gpt-5.3-codex gpt-5-mini mai-code-1-flash-picker gemini-3.6-flash gemini-3.5-flash gemini-3.1-pro-preview grok-4.5 kimi-k3 kimi-k2.7-code'
+complete -c copilot -l model -r -f -a 'auto claude-sonnet-5 claude-fable-5 claude-opus-5 claude-opus-4.8 claude-opus-4.8-fast claude-opus-4.7 claude-sonnet-4.6 claude-opus-4.6 claude-sonnet-4.5 claude-opus-4.5 claude-haiku-4.5 gpt-5.6-sol gpt-5.6-terra gpt-5.6-luna gpt-5.5 gpt-5.4 gpt-5.4-mini gpt-5.3-codex gpt-5-mini mai-code-1-flash-picker gemini-3.7-flash gemini-3.6-flash gemini-3.5-flash gemini-3.1-pro-preview grok-4.5 kimi-k3 kimi-k2.7-code'
 complete -c copilot -l model -r -f -d 'Set the AI model to use (use \'auto\' to let Copilot pick automatically)'
 complete -c copilot -l effort -l reasoning-effort -r -f -a 'none minimal low medium high xhigh max'
 complete -c copilot -l effort -l reasoning-effort -r -f -d 'Set the reasoning effort level'
