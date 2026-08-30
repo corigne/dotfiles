@@ -8,7 +8,7 @@
     // Choose the order of the modules
     "modules-left": ["tray", "hyprland/workspaces", "hyprland/submap"],
     "modules-center": ["custom/music"],
-    "modules-right": ["custom/battery", "backlight", "temperature","memory","cpu", "custom/gpu-usage",
+    "modules-right": ["custom/battery", "power-profiles-daemon", "backlight", "temperature","memory","cpu", "custom/gpu-usage",
         "pulseaudio", "clock", "date", "idle_inhibitor", "custom/lock",
         "custom/power"],
     "wlr/workspaces": {
