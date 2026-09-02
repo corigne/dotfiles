@@ -67,7 +67,7 @@ hl.on("hyprland.start", function()
     hl.exec_cmd("hyprpm reload")
     hl.exec_cmd("mako")
     hl.exec_cmd("dex -a")
-    hl.exec_cmd("swww-daemon")
+    hl.exec_cmd("awww-daemon")
     hl.exec_cmd("clipse -listen")
     hl.exec_cmd("musicpresence")
     hl.exec_cmd("udiskie --tray")
@@ -106,8 +106,8 @@ hl.config({
     decoration = {
         rounding         = 4,
 
-        active_opacity   = 0.9,
-        inactive_opacity = 0.725,
+        active_opacity   = 0.875,
+        inactive_opacity = 0.75,
 
         shadow           = {
             enabled      = true,
@@ -378,6 +378,7 @@ hl.window_rule({ match = { title = "^Black & White$" }, opacity = "1.0 override 
 hl.window_rule({ match = { title = "^Diablo II: Resurrected$" }, opacity = "1.0 override 1.0 override" })
 hl.window_rule({ match = { initial_title = "^Discord Popout$" }, opacity = "1.0 override 1.0 override" })
 hl.window_rule({ match = { class = "^org.darktable.darktable$" }, opacity = "1.0 override 1.0 override" })
+hl.window_rule({ match = { class = "^scrcpy$" }, opacity = "1.0 override 1.0 override" })
 
 -- Floating / tiling overrides
 hl.window_rule({ match = { class = "^xclicker$", float = true }, tile = true })
