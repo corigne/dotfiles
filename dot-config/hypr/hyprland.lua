@@ -399,6 +399,7 @@ hl.window_rule({ match = { title = "^Diablo II: Resurrected$" }, opacity = "1.0 
 hl.window_rule({ match = { initial_title = "^Discord Popout$" }, opacity = "1.0 override 1.0 override" })
 hl.window_rule({ match = { class = "^org.darktable.darktable$" }, opacity = "1.0 override 1.0 override" })
 hl.window_rule({ match = { class = "^scrcpy$" }, opacity = "1.0 override 1.0 override" })
+hl.window_rule({ match = { title = "^DualCPY Container$" }, opacity = "1.0 override 1.0 override" })
 
 -- Floating / tiling overrides
 hl.window_rule({ match = { class = "^xclicker$", float = true }, tile = true })
