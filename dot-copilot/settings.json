@@ -1,5 +1,16 @@
 {
+  "hooks": {
+    "SessionStart": [
+      {
+        "bash": "bash '/home/nexus/.copilot/hooks/herdr-agent-state.sh'",
+        "timeoutSec": 10,
+        "type": "command"
+      }
+    ]
+  },
   "model": "claude-sonnet-5",
+  "remoteExport": true,
+  "remoteSessions": true,
   "showReasoning": false,
   "theme": "default"
 }
