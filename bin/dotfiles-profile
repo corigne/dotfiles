@@ -102,11 +102,18 @@ is_legacy_link() {
 }
 
 legacy_links() {
-    for path in "$HOME/.bashrc" "$HOME/.bash_aliases"; do
+    for path in \
+        "$HOME/.bashrc" \
+        "$HOME/.bash_aliases" \
+        "$HOME/.copilot/copilot-instructions.md" \
+        "$HOME/.copilot/mcp-config.json" \
+        "$HOME/.copilot/settings.json" \
+        "$HOME/.copilot/caveman-src"
+    do
         is_legacy_link "$path" && printf '%s\n' "$path"
     done
 
-    for root in "$HOME/.config" "$HOME/.copilot"; do
+    for root in "$HOME/.config" "$HOME/.copilot/agents" "$HOME/.copilot/skills"; do
         [ -d "$root" ] || continue
         find "$root" -type l -print
     done | while IFS= read -r path; do
