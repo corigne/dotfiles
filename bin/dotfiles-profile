@@ -14,6 +14,7 @@ Usage:
   dotfiles-profile unstow [niri|hypr]
   dotfiles-profile status
   dotfiles-profile audit niri
+  dotfiles-profile migrate-legacy <plan|apply>
 EOF
 }
 
@@ -23,6 +24,13 @@ packages_for() {
         hypr) printf '%s\n' "common hypr" ;;
         *) return 1 ;;
     esac
+}
+
+require_command() {
+    command -v "$1" >/dev/null 2>&1 || {
+        printf 'required command missing: %s\n' "$1" >&2
+        return 1
+    }
 }
 
 run_stow() {
@@ -70,6 +78,71 @@ require_scripts_submodule() {
         printf '%s\n' "Run: git submodule update --init --recursive" >&2
         return 1
     }
+}
+
+is_legacy_link() {
+    path=$1
+    [ -L "$path" ] || return 1
+
+    link=$(readlink "$path")
+    case "$link" in
+        /*) target=$link ;;
+        *) target=$(dirname "$path")/$link ;;
+    esac
+    target=$(realpath -m "$target")
+
+    case "$target" in
+        "$repo_dir/dot-config"|"$repo_dir/dot-config/"*|\
+        "$repo_dir/dot-copilot"|"$repo_dir/dot-copilot/"*|\
+        "$repo_dir/dot-bashrc"|"$repo_dir/dot-bash_aliases")
+            return 0
+            ;;
+        *) return 1 ;;
+    esac
+}
+
+legacy_links() {
+    for path in "$HOME/.bashrc" "$HOME/.bash_aliases"; do
+        is_legacy_link "$path" && printf '%s\n' "$path"
+    done
+
+    for root in "$HOME/.config" "$HOME/.copilot"; do
+        [ -d "$root" ] || continue
+        find "$root" -type l -print
+    done | while IFS= read -r path; do
+        is_legacy_link "$path" && printf '%s\n' "$path"
+    done || true
+    return 0
+}
+
+legacy_real_overrides() {
+    for path in "$HOME/.config/shell/dev.env" "$HOME/.copilot/settings.json"; do
+        [ -e "$path" ] && [ ! -L "$path" ] && printf '%s\n' "$path"
+    done
+    return 0
+}
+
+migrate_legacy() {
+    mode=$1
+    require_command realpath
+
+    printf '%s\n' "Legacy links into retired repository paths:"
+    legacy_links
+    printf '%s\n' "Real files to preserve as timestamped backups:"
+    legacy_real_overrides
+
+    [ "$mode" = "apply" ] || return 0
+
+    legacy_links | while IFS= read -r path; do
+        rm -f "$path"
+    done
+
+    timestamp=$(date +%Y%m%d%H%M%S)
+    legacy_real_overrides | while IFS= read -r path; do
+        backup="${path}.pre-profile-${timestamp}"
+        mv "$path" "$backup"
+        printf 'backed up: %s -> %s\n' "$path" "$backup"
+    done
 }
 
 current_profile() {
@@ -213,6 +286,10 @@ case "$command" in
     audit)
         [ "${2:-}" = "niri" ] || { usage >&2; exit 2; }
         audit_niri
+        ;;
+    migrate-legacy)
+        [ "$#" -eq 2 ] || { usage >&2; exit 2; }
+        case "$2" in plan|apply) migrate_legacy "$2" ;; *) usage >&2; exit 2 ;; esac
         ;;
     *)
         usage >&2

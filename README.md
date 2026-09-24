@@ -89,10 +89,24 @@ Before applying on `ishimura`:
 
 ### Existing installations
 
-The old repository layout used `stow --dotfiles .`. Preview the new profile
-before applying it. Broken links that still point at the old repository paths
-must be removed only after confirming their targets no longer exist. The
-profile command intentionally does not delete arbitrary home-directory links.
+The old repository layout used `stow --dotfiles .`. Preview its one-time
+migration:
+
+```sh
+./bin/dotfiles-profile migrate-legacy plan
+```
+
+Apply after reviewing the exact paths:
+
+```sh
+./bin/dotfiles-profile migrate-legacy apply
+./bin/dotfiles-profile plan niri
+```
+
+Migration removes only symlinks resolving into retired paths inside this
+repository. Existing real `dev.env` and Copilot settings files receive
+timestamped sibling backups before Stow takes ownership. Arbitrary files and
+external symlinks remain untouched.
 
 ## Desktop-system setup on Arch
 
