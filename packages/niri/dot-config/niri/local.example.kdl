@@ -4,11 +4,17 @@ output "eDP-1" {
     scale 1
 }
 
+// On hybrid-GPU laptops where every connector belongs to the integrated GPU,
+// pin rendering there and keep the discrete GPU closed until explicit offload.
+// debug {
+//     render-drm-device "/dev/dri/by-path/pci-0000:00:02.0-render"
+//     ignore-drm-device "/dev/dri/by-path/pci-0000:03:00.0-render"
+// }
+
 input {
     touchpad {
-        tap false
-        dwt false
-        natural-scroll false
+        // Presence-only options such as tap, dwt, and natural-scroll are
+        // disabled by omitting them.
         accel-speed 0.25
         scroll-factor 0.4
     }
