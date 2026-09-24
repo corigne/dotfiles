@@ -104,9 +104,9 @@ Apply after reviewing the exact paths:
 ```
 
 Migration removes only symlinks resolving into retired paths inside this
-repository. Existing real `dev.env` and Copilot settings files receive
-timestamped sibling backups before Stow takes ownership. Arbitrary files and
-external symlinks remain untouched.
+repository. Existing real `dev.env`, Copilot settings, and legacy Waybar
+watcher unit files receive timestamped sibling backups before Stow takes
+ownership. Arbitrary files and external symlinks remain untouched.
 
 ## Desktop-system setup on Arch
 

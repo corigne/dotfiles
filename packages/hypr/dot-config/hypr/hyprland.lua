@@ -59,6 +59,7 @@ hl.monitor({
 
 -- exec-once equivalents (run once on session start)
 hl.on("hyprland.start", function()
+    hl.exec_cmd("dbus-update-activation-environment --systemd WAYLAND_DISPLAY DISPLAY HYPRLAND_INSTANCE_SIGNATURE XDG_CURRENT_DESKTOP XDG_SESSION_TYPE")
     hl.exec_cmd("xembedsniproxy")
     hl.exec_cmd("hypridle")
     hl.exec_cmd("systemctl --user start hyprpolkitagent.service")
@@ -70,7 +71,6 @@ hl.on("hyprland.start", function()
     hl.exec_cmd("musicpresence")
     hl.exec_cmd("udiskie --tray")
     hl.exec_cmd("awww-slideshow ~/Pictures/slideshow/ " .. gowall_theme)
-    hl.exec_cmd("dbus-update-activation-environment --systemd WAYLAND_DISPLAY XDG_CURRENT_DESKTOP XDG_SESSION_TYPE")
 end)
 
 -- exec equivalents (run on start and reload — guarded with pidof)

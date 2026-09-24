@@ -123,7 +123,11 @@ legacy_links() {
 }
 
 legacy_real_overrides() {
-    for path in "$HOME/.config/shell/dev.env" "$HOME/.copilot/settings.json"; do
+    for path in \
+        "$HOME/.config/shell/dev.env" \
+        "$HOME/.copilot/settings.json" \
+        "$HOME/.config/systemd/user/waybar-battery-watcher.service"
+    do
         [ -e "$path" ] && [ ! -L "$path" ] && printf '%s\n' "$path"
     done
     return 0
@@ -189,13 +193,18 @@ apply_profile() {
 
     if [ "${DOTFILES_SKIP_USER_SERVICES:-0}" != "1" ]; then
         systemctl --user daemon-reload >/dev/null 2>&1 || true
-        for unit in hyprpolkitagent.service waybar-battery-watcher.service; do
-            if [ "$profile" = "niri" ]; then
-                systemctl --user disable --now "$unit" >/dev/null 2>&1 || true
-            else
-                systemctl --user disable "$unit" >/dev/null 2>&1 || true
-            fi
+        for wants_link in \
+            "$HOME/.config/systemd/user/default.target.wants/waybar-battery-watcher.service" \
+            "$HOME/.config/systemd/user/graphical-session.target.wants/waybar-battery-watcher.service"
+        do
+            [ -L "$wants_link" ] && rm -f "$wants_link"
         done
+        if [ "$profile" = "niri" ]; then
+            systemctl --user disable --now hyprpolkitagent.service >/dev/null 2>&1 || true
+            systemctl --user stop waybar-battery-watcher.service >/dev/null 2>&1 || true
+        else
+            systemctl --user disable hyprpolkitagent.service >/dev/null 2>&1 || true
+        fi
     fi
 
     mkdir -p "$state_dir"
