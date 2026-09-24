@@ -9,9 +9,9 @@ state_file="$state_dir/profile"
 usage() {
     cat <<'EOF'
 Usage:
-  dotfiles-profile plan <niri|hypr>
-  dotfiles-profile apply <niri|hypr>
-  dotfiles-profile unstow [niri|hypr]
+  dotfiles-profile plan <niri|hypr|trial>
+  dotfiles-profile apply <niri|hypr|trial>
+  dotfiles-profile unstow [niri|hypr|trial]
   dotfiles-profile status
   dotfiles-profile audit niri
   dotfiles-profile migrate-legacy <plan|apply>
@@ -22,8 +22,23 @@ packages_for() {
     case "$1" in
         niri) printf '%s\n' "common niri noctalia" ;;
         hypr) printf '%s\n' "common hypr" ;;
+        trial) printf '%s\n' "common niri noctalia hypr" ;;
         *) return 1 ;;
     esac
+}
+
+packages_to_remove() {
+    old_packages=$1
+    new_packages=$2
+    remove=
+
+    for package in $old_packages; do
+        case " $new_packages " in
+            *" $package "*) ;;
+            *) remove="$remove $package" ;;
+        esac
+    done
+    printf '%s\n' "${remove# }"
 }
 
 require_command() {
@@ -170,7 +185,8 @@ plan_profile() {
     require_scripts_submodule
 
     if [ -n "$current" ] && [ "$current" != "$profile" ]; then
-        run_stow plan-delete "$(packages_for "$current")"
+        remove=$(packages_to_remove "$(packages_for "$current")" "$selected")
+        [ -n "$remove" ] && run_stow plan-delete "$remove"
     fi
     run_stow plan-stow "$selected"
     run_scripts_stow plan-stow
@@ -186,7 +202,8 @@ apply_profile() {
     run_scripts_stow plan-stow
 
     if [ -n "$current" ] && [ "$current" != "$profile" ]; then
-        run_stow delete "$(packages_for "$current")"
+        remove=$(packages_to_remove "$(packages_for "$current")" "$selected")
+        [ -n "$remove" ] && run_stow delete "$remove"
     fi
     run_stow stow "$selected"
     run_scripts_stow stow
@@ -228,26 +245,32 @@ unstow_profile() {
 audit_niri() {
     failed=0
 
-    if [ "$(current_profile)" != "niri" ]; then
-        printf 'unexpected recorded profile: %s\n' "$(current_profile)" >&2
-        failed=1
-    fi
+    profile=$(current_profile)
+    case "$profile" in
+        niri|trial) ;;
+        *)
+            printf 'unexpected recorded profile: %s\n' "$profile" >&2
+            failed=1
+            ;;
+    esac
 
-    printf '%s\n' "Checking active links for Hypr profile paths..."
-    for path in \
-        "$HOME/.config/hypr/hyprland.lua" \
-        "$HOME/.config/waybar/config.jsonc" \
-        "$HOME/.config/mako/config" \
-        "$HOME/.config/wlogout/layout"
-    do
-        target=$(readlink -f "$path" 2>/dev/null || true)
-        case "$target" in
-            "$repo_dir/packages/hypr"/*)
-                printf 'unexpected active link: %s -> %s\n' "$path" "$target" >&2
-                failed=1
-                ;;
-        esac
-    done
+    if [ "$profile" = "niri" ]; then
+        printf '%s\n' "Checking active links for Hypr profile paths..."
+        for path in \
+            "$HOME/.config/hypr/hyprland.lua" \
+            "$HOME/.config/waybar/config.jsonc" \
+            "$HOME/.config/mako/config" \
+            "$HOME/.config/wlogout/layout"
+        do
+            target=$(readlink -f "$path" 2>/dev/null || true)
+            case "$target" in
+                "$repo_dir/packages/hypr"/*)
+                    printf 'unexpected active link: %s -> %s\n' "$path" "$target" >&2
+                    failed=1
+                    ;;
+            esac
+        done
+    fi
 
     printf '%s\n' "Checking enabled Hypr user services..."
     for unit in hyprpolkitagent.service waybar-battery-watcher.service; do

@@ -4,6 +4,7 @@ Wayland-first dotfiles with explicit desktop profiles:
 
 - `niri`: niri + Noctalia + Noctalia Greeter
 - `hypr`: retained Hyprland setup
+- `trial`: both desktop configs, with session-owned services kept isolated
 - `common`: shell, terminals, editors, and shared tools
 
 GNU Stow owns user configuration. A small POSIX shell adapter owns only
@@ -52,6 +53,15 @@ Apply:
 ```sh
 ./bin/dotfiles-profile apply niri
 ```
+
+During evaluation, keep both greeter sessions usable:
+
+```sh
+./bin/dotfiles-profile apply trial
+```
+
+`trial` installs both desktop configs but does not start either desktop's
+components globally. After accepting niri, switch to strict `niri`.
 
 Other commands:
 
