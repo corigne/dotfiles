@@ -5,7 +5,7 @@ default = "Niri"
 password_style = "default"
 power_buttons_position = "bottom-right"
 scheme_selector_position = "top-right"
-font_family = "Maple Mono NF CN"
+font_family = "Noto Sans Mono"
 
 [idle]
 timeout = 60

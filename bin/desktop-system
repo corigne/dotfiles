@@ -110,6 +110,8 @@ install_root_file() {
     group=$5
 
     if sudo test -f "$target" && sudo cmp -s "$source" "$target"; then
+        sudo chown "$owner:$group" "$target"
+        sudo chmod "$mode" "$target"
         return 0
     fi
 
@@ -130,8 +132,8 @@ validate_niri_system() {
     require_command niri
     require_command noctalia
     require_command noctalia-greeter-session
-    id greeter >/dev/null 2>&1 || {
-        printf '%s\n' "required greeter account missing: greeter" >&2
+    id greetduser >/dev/null 2>&1 || {
+        printf '%s\n' "required greeter account missing: greetduser" >&2
         return 1
     }
     [ -f /usr/share/wayland-sessions/niri.desktop ] || {
@@ -163,25 +165,37 @@ apply_niri_system() {
     install_root_file \
         "$repo_dir/system/arch/xdg-desktop-portal/niri-portals.conf" \
         /etc/xdg-desktop-portal/niri-portals.conf 0644 root root
+    sudo install -d -m 0750 -o greetduser -g greetduser /var/lib/noctalia-greeter
     install_root_file \
         "$repo_dir/system/arch/greetd/greeter.toml" \
-        /var/lib/noctalia-greeter/greeter.toml 0644 greeter greeter
+        /var/lib/noctalia-greeter/greeter.toml 0644 greetduser greetduser
 }
 
 verify_root_file() {
     source=$1
     target=$2
+    mode=$3
+    owner=$4
+    group=$5
     sudo test -f "$target" && sudo cmp -s "$source" "$target" || {
         printf 'managed root file differs or is missing: %s\n' "$target" >&2
+        return 1
+    }
+    [ "$(sudo stat -c '%a' "$target")" = "$mode" ] || {
+        printf 'managed root file has wrong mode: %s\n' "$target" >&2
+        return 1
+    }
+    [ "$(sudo stat -c '%U:%G' "$target")" = "$owner:$group" ] || {
+        printf 'managed root file has wrong owner: %s\n' "$target" >&2
         return 1
     }
 }
 
 verify_niri_system() {
     validate_niri_system
-    verify_root_file "$repo_dir/system/arch/greetd/config.toml" /etc/greetd/config.toml
-    verify_root_file "$repo_dir/system/arch/xdg-desktop-portal/niri-portals.conf" /etc/xdg-desktop-portal/niri-portals.conf
-    verify_root_file "$repo_dir/system/arch/greetd/greeter.toml" /var/lib/noctalia-greeter/greeter.toml
+    verify_root_file "$repo_dir/system/arch/greetd/config.toml" /etc/greetd/config.toml 644 root root
+    verify_root_file "$repo_dir/system/arch/xdg-desktop-portal/niri-portals.conf" /etc/xdg-desktop-portal/niri-portals.conf 644 root root
+    verify_root_file "$repo_dir/system/arch/greetd/greeter.toml" /var/lib/noctalia-greeter/greeter.toml 644 greetduser greetduser
 }
 
 activate_niri_system() {
@@ -275,10 +289,10 @@ case "$action" in
         ;;
     apply)
         require_command pacman
-        install_manifest "$native_manifest" "sudo pacman -S --needed"
+        install_manifest "$native_manifest" "sudo pacman -S --needed --noconfirm"
         if [ -n "$(missing_packages "$aur_manifest")" ]; then
             require_command paru
-            install_manifest "$aur_manifest" "paru -S --needed"
+            install_manifest "$aur_manifest" "paru -S --needed --noconfirm"
         fi
         if [ "$profile" = "niri" ]; then
             apply_niri_system
