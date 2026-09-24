@@ -9,7 +9,7 @@ state_root=${XDG_STATE_HOME:-"$HOME/.local/state"}/dotfiles/system
 
 usage() {
     cat <<'EOF'
-Usage: desktop-system arch <niri|hypr> <check|plan|apply|verify|remove|rollback>
+Usage: desktop-system arch <niri|hypr> <check|plan|apply|verify|activate|remove|rollback>
 
 Only desktop-profile packages, owned root templates, and owned services are
 managed. Unrelated packages and /etc files are never converged or removed.
@@ -166,7 +166,29 @@ apply_niri_system() {
     install_root_file \
         "$repo_dir/system/arch/greetd/greeter.toml" \
         /var/lib/noctalia-greeter/greeter.toml 0644 greeter greeter
+}
 
+verify_root_file() {
+    source=$1
+    target=$2
+    sudo test -f "$target" && sudo cmp -s "$source" "$target" || {
+        printf 'managed root file differs or is missing: %s\n' "$target" >&2
+        return 1
+    }
+}
+
+verify_niri_system() {
+    validate_niri_system
+    verify_root_file "$repo_dir/system/arch/greetd/config.toml" /etc/greetd/config.toml
+    verify_root_file "$repo_dir/system/arch/xdg-desktop-portal/niri-portals.conf" /etc/xdg-desktop-portal/niri-portals.conf
+    verify_root_file "$repo_dir/system/arch/greetd/greeter.toml" /var/lib/noctalia-greeter/greeter.toml
+}
+
+activate_niri_system() {
+    verify_niri_system
+    printf '%s\n' "TTY recovery:"
+    printf '%s\n' "  sudo systemctl disable --now greetd.service"
+    printf '%s\n' "  $repo_dir/bin/desktop-system arch niri rollback"
     sudo systemctl enable greetd.service
 }
 
@@ -264,7 +286,12 @@ case "$action" in
         ;;
     verify)
         if [ "$profile" = "niri" ]; then
-            validate_niri_system
+            verify_niri_system
+        fi
+        ;;
+    activate)
+        if [ "$profile" = "niri" ]; then
+            activate_niri_system
         fi
         ;;
     remove)

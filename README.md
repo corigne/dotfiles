@@ -134,10 +134,11 @@ Apply after reviewing package and file changes:
 ./bin/desktop-system arch niri apply
 ```
 
-Post-install verification:
+Post-install verification and explicit greetd activation:
 
 ```sh
 ./bin/desktop-system arch niri verify
+./bin/desktop-system arch niri activate
 ```
 
 The niri profile uses official Arch packages where available. AUR-only packages
@@ -157,8 +158,9 @@ the adapter:
 ./bin/desktop-system arch niri rollback
 ```
 
-The adapter enables greetd but does not reboot. Keep a TTY or root-capable shell
-open before replacing a display manager.
+`apply` does not enable greetd. `activate` verifies installed files, prints TTY
+recovery commands, and enables greetd without rebooting. Keep a TTY or
+root-capable shell open before activation.
 
 ## Niri configuration
 
