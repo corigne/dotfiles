@@ -1,11 +1,14 @@
-[submodule "dot-config/nvim"]
-	path = dot-config/nvim
+[submodule "packages/common/dot-config/nvim"]
+	path = packages/common/dot-config/nvim
 	url = git@github.com:corigne/dot-neovim.git
 	branch = main
-[submodule "dot-config/tmux"]
-	path = dot-config/tmux
+[submodule "packages/common/dot-config/tmux"]
+	path = packages/common/dot-config/tmux
 	url = git@github.com:corigne/dot-tmux.git
 	branch = main
-[submodule "dot-copilot/caveman-src"]
-	path = dot-copilot/caveman-src
+[submodule "packages/common/dot-copilot/caveman-src"]
+	path = packages/common/dot-copilot/caveman-src
 	url = https://github.com/JuliusBrussee/caveman
+[submodule "modules/scripts"]
+	path = modules/scripts
+	url = git@github.com:corigne/scripts.git

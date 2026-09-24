@@ -1,0 +1,16 @@
+[session]
+default = "Niri"
+
+[appearance]
+password_style = "default"
+power_buttons_position = "bottom-right"
+scheme_selector_position = "top-right"
+font_family = "Maple Mono NF CN"
+
+[idle]
+timeout = 60
+
+[keyboard]
+layout = "us"
+options = "ctrl:nocaps"
+numlock = true

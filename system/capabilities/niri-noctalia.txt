@@ -1,0 +1,12 @@
+# Distro-neutral desktop capabilities.
+wayland-compositor:niri
+wayland-shell:noctalia
+wayland-greeter:noctalia-greeter
+login-daemon:greetd
+xwayland:xwayland-satellite
+portal:file-chooser
+portal:screencast
+secret-service
+pipewire-control
+media-control
+backlight-control

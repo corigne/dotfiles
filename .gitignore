@@ -3,3 +3,5 @@
 .cache
 */fish/fish_variables
 local.lua
+packages/niri/dot-config/niri/local.kdl
+packages/noctalia/dot-config/noctalia/local.toml

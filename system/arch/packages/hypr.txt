@@ -1,0 +1,16 @@
+hyprland
+hyprlock
+hypridle
+hyprpolkitagent
+waybar
+mako
+tofi
+ghostty
+thunar
+yazi
+brightnessctl
+playerctl
+wireplumber
+grim
+slurp
+wl-clipboard

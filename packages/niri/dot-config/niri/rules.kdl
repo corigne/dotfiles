@@ -1,0 +1,66 @@
+// Rules are processed top-to-bottom. Put broad opacity first, then exceptions.
+
+window-rule {
+    opacity 0.75
+}
+
+window-rule {
+    match is-focused=true
+    opacity 0.875
+}
+
+// Full-opacity applications. Prefer anchored app IDs over changing titles.
+window-rule {
+    match app-id=r#"^(feh|vimiv|net-runelite-client-RuneLite|jagexlauncher\.exe)$"#
+    match app-id=r#"^(virt-manager|qemu|remote-viewer|qv4l2|gimp|swayimg)$"#
+    match app-id=r#"^(obsidian|firefox|org\.vinegarhq\.Sober|robloxstudiobeta\.exe)$"#
+    match app-id=r#"^(org\.remmina\.Remmina|mpv|vlc|krita|steam_app_881100)$"#
+    match app-id=r#"^(rsi launcher\.exe|org\.jellyfin\.JellyfinDesktop)$"#
+    match app-id=r#"^(org\.darktable\.darktable|scrcpy|zoom)$"#
+    opacity 1.0
+}
+
+window-rule {
+    match title=r#"^(Battle\.net|Black & White|Diablo II: Resurrected|DualCPY Container)$"#
+    match title="^Discord Popout$"
+    opacity 1.0
+}
+
+// Dialogs and utility windows.
+window-rule {
+    match app-id=r#"^Thunar$"# title="^File Operation Progress$"
+    match app-id=r#"^peazip$"#
+    match app-id=r#"^io\.nexus\.thunarextract$"#
+    open-floating true
+}
+
+window-rule {
+    match app-id=r#"^io\.nexus\.thunarextract$"#
+    default-column-width { fixed 700; }
+    default-window-height { fixed 400; }
+}
+
+window-rule {
+    match app-id=r#"^org\.mozilla\.Thunderbird$"# title=r#"^Write:\s.+"#
+    match app-id=r#"^org\.mozilla\.Thunderbird$"# title=r#".*Reminders.*"#
+    open-floating true
+}
+
+window-rule {
+    match app-id=r#"^com\.hex-rays\..*"# title="^Please wait...$"
+    open-floating true
+    default-column-width { fixed 600; }
+    default-window-height { fixed 250; }
+}
+
+window-rule {
+    match app-id=r#"^xdg-desktop-portal-gtk$"#
+    open-floating true
+}
+
+// Protect password managers from accidental screen capture.
+window-rule {
+    match app-id=r#"^org\.keepassxc\.KeePassXC$"#
+    match app-id=r#"^org\.gnome\.World\.Secrets$"#
+    block-out-from "screen-capture"
+}

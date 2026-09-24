@@ -1,0 +1,221 @@
+#!/bin/sh
+set -eu
+
+repo_dir=$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)
+stow_dir="$repo_dir/packages"
+state_dir=${XDG_STATE_HOME:-"$HOME/.local/state"}/dotfiles
+state_file="$state_dir/profile"
+
+usage() {
+    cat <<'EOF'
+Usage:
+  dotfiles-profile plan <niri|hypr>
+  dotfiles-profile apply <niri|hypr>
+  dotfiles-profile unstow [niri|hypr]
+  dotfiles-profile status
+  dotfiles-profile audit niri
+EOF
+}
+
+packages_for() {
+    case "$1" in
+        niri) printf '%s\n' "common niri noctalia" ;;
+        hypr) printf '%s\n' "common hypr" ;;
+        *) return 1 ;;
+    esac
+}
+
+run_stow() {
+    mode=$1
+    package_list=$2
+
+    # Package names are repository-owned constants without whitespace.
+    # shellcheck disable=SC2086
+    case "$mode" in
+        plan-delete)
+            stow --simulate --delete --verbose=2 --no-folding --dotfiles --dir "$stow_dir" --target "$HOME" $package_list
+            ;;
+        plan-stow)
+            stow --simulate --stow --verbose=2 --no-folding --dotfiles --dir "$stow_dir" --target "$HOME" $package_list
+            ;;
+        delete)
+            stow --delete --verbose=1 --no-folding --dotfiles --dir "$stow_dir" --target "$HOME" $package_list
+            ;;
+        stow)
+            stow --stow --verbose=1 --no-folding --dotfiles --dir "$stow_dir" --target "$HOME" $package_list
+            ;;
+    esac
+}
+
+run_scripts_stow() {
+    mode=$1
+    target="$HOME/.local/bin"
+    mkdir -p "$target"
+    case "$mode" in
+        plan-stow)
+            stow --simulate --stow --verbose=2 --dir "$repo_dir/modules/scripts" --target "$target" bin
+            ;;
+        delete)
+            stow --delete --verbose=1 --dir "$repo_dir/modules/scripts" --target "$target" bin
+            ;;
+        stow)
+            stow --stow --verbose=1 --dir "$repo_dir/modules/scripts" --target "$target" bin
+            ;;
+    esac
+}
+
+require_scripts_submodule() {
+    [ -d "$repo_dir/modules/scripts/bin" ] || {
+        printf '%s\n' "Scripts submodule is missing bin/." >&2
+        printf '%s\n' "Run: git submodule update --init --recursive" >&2
+        return 1
+    }
+}
+
+current_profile() {
+    if [ -f "$state_file" ]; then
+        cat "$state_file"
+    fi
+}
+
+plan_profile() {
+    profile=$1
+    selected=$(packages_for "$profile")
+    current=$(current_profile)
+
+    require_scripts_submodule
+
+    if [ -n "$current" ] && [ "$current" != "$profile" ]; then
+        run_stow plan-delete "$(packages_for "$current")"
+    fi
+    run_stow plan-stow "$selected"
+    run_scripts_stow plan-stow
+}
+
+apply_profile() {
+    profile=$1
+    selected=$(packages_for "$profile")
+    current=$(current_profile)
+
+    require_scripts_submodule
+    run_stow plan-stow "$selected"
+    run_scripts_stow plan-stow
+
+    if [ -n "$current" ] && [ "$current" != "$profile" ]; then
+        run_stow delete "$(packages_for "$current")"
+    fi
+    run_stow stow "$selected"
+    run_scripts_stow stow
+
+    if [ "${DOTFILES_SKIP_USER_SERVICES:-0}" != "1" ]; then
+        systemctl --user daemon-reload >/dev/null 2>&1 || true
+        for unit in hyprpolkitagent.service waybar-battery-watcher.service; do
+            if [ "$profile" = "niri" ]; then
+                systemctl --user disable --now "$unit" >/dev/null 2>&1 || true
+            else
+                systemctl --user disable "$unit" >/dev/null 2>&1 || true
+            fi
+        done
+    fi
+
+    mkdir -p "$state_dir"
+    printf '%s\n' "$profile" >"$state_file"
+}
+
+unstow_profile() {
+    profile=${1:-$(current_profile)}
+    [ -n "$profile" ] || {
+        printf '%s\n' "No active profile recorded." >&2
+        return 1
+    }
+
+    run_stow delete "$(packages_for "$profile")"
+    run_scripts_stow delete
+    if [ -f "$state_file" ] && [ "$(current_profile)" = "$profile" ]; then
+        rm -f "$state_file"
+    fi
+}
+
+audit_niri() {
+    failed=0
+
+    if [ "$(current_profile)" != "niri" ]; then
+        printf 'unexpected recorded profile: %s\n' "$(current_profile)" >&2
+        failed=1
+    fi
+
+    printf '%s\n' "Checking active links for Hypr profile paths..."
+    for path in \
+        "$HOME/.config/hypr/hyprland.lua" \
+        "$HOME/.config/waybar/config.jsonc" \
+        "$HOME/.config/mako/config" \
+        "$HOME/.config/wlogout/layout"
+    do
+        target=$(readlink -f "$path" 2>/dev/null || true)
+        case "$target" in
+            "$repo_dir/packages/hypr"/*)
+                printf 'unexpected active link: %s -> %s\n' "$path" "$target" >&2
+                failed=1
+                ;;
+        esac
+    done
+
+    printf '%s\n' "Checking enabled Hypr user services..."
+    for unit in hyprpolkitagent.service waybar-battery-watcher.service; do
+        if systemctl --user is-enabled "$unit" >/dev/null 2>&1; then
+            printf 'unexpected enabled user service: %s\n' "$unit" >&2
+            failed=1
+        fi
+    done
+
+    printf '%s\n' "Checking running desktop components..."
+    for process in Hyprland hyprlock hypridle hyprpolkitagent waybar mako tofi clipse awww-daemon wlogout; do
+        if pgrep -x "$process" >/dev/null 2>&1; then
+            printf 'unexpected running process: %s\n' "$process" >&2
+            failed=1
+        fi
+    done
+
+    if pgrep -f '/xdg-desktop-portal-hyprland' >/dev/null 2>&1; then
+        printf '%s\n' "unexpected running process: xdg-desktop-portal-hyprland" >&2
+        failed=1
+    fi
+
+    case "${XDG_CURRENT_DESKTOP:-}" in
+        niri|Niri) ;;
+        *)
+            printf 'unexpected XDG_CURRENT_DESKTOP: %s\n' "${XDG_CURRENT_DESKTOP:-unset}" >&2
+            failed=1
+            ;;
+    esac
+
+    return "$failed"
+}
+
+command=${1:-}
+case "$command" in
+    plan)
+        [ "$#" -eq 2 ] || { usage >&2; exit 2; }
+        plan_profile "$2"
+        ;;
+    apply)
+        [ "$#" -eq 2 ] || { usage >&2; exit 2; }
+        apply_profile "$2"
+        ;;
+    unstow)
+        [ "$#" -le 2 ] || { usage >&2; exit 2; }
+        unstow_profile "${2:-}"
+        ;;
+    status)
+        profile=$(current_profile)
+        printf 'active profile: %s\n' "${profile:-none}"
+        ;;
+    audit)
+        [ "${2:-}" = "niri" ] || { usage >&2; exit 2; }
+        audit_niri
+        ;;
+    *)
+        usage >&2
+        exit 2
+        ;;
+esac

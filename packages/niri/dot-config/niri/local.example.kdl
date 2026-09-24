@@ -1,0 +1,19 @@
+// Copy to local.kdl. This file is intentionally not installed from version control.
+
+output "eDP-1" {
+    scale 1
+}
+
+input {
+    touchpad {
+        tap false
+        dwt false
+        natural-scroll false
+        accel-speed 0.25
+        scroll-factor 0.4
+    }
+
+    trackpoint {
+        accel-profile "adaptive"
+    }
+}

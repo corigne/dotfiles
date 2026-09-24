@@ -1,0 +1,93 @@
+[shell]
+corner_radius_scale = 0.75
+font_family = "Maple Mono NF CN"
+time_format = "{:%H:%M}"
+date_format = "%Y-%m-%d"
+telemetry_enabled = false
+polkit_agent = true
+clipboard_enabled = true
+clipboard_history_max_entries = 100
+
+[shell.panel]
+transparency_mode = "soft"
+borders = true
+shadow = true
+launcher_placement = "floating"
+clipboard_placement = "floating"
+control_center_placement = "attached"
+wallpaper_placement = "attached"
+session_placement = "attached"
+
+[shell.launcher]
+categories = true
+show_icons = true
+sort_by_usage = true
+fetch_exchange_rates = false
+
+[wallpaper]
+enabled = true
+fill_mode = "crop"
+transition = ["fade", "wipe", "zoom"]
+transition_duration = 900
+directory = ""
+
+[wallpaper.automation]
+enabled = false
+interval_seconds = 300
+order = "random"
+recursive = true
+
+[theme]
+mode = "dark"
+source = "builtin"
+builtin = "Catppuccin"
+
+[notification]
+enable_daemon = true
+show_app_name = true
+show_actions = true
+background_opacity = 0.94
+offset_x = 12
+offset_y = 8
+
+[osd]
+position = "top_right"
+background_opacity = 0.94
+
+[lockscreen]
+enabled = true
+blurred_desktop = false
+blur_intensity = 0.25
+tint_intensity = 0.35
+
+[system.monitor]
+enabled = true
+
+[audio]
+enable_overdrive = false
+
+[idle.behavior.lock]
+timeout = 600
+action = "lock"
+enabled = true
+
+[idle.behavior.screen-off]
+timeout = 660
+action = "screen_off"
+enabled = true
+
+[bar.main]
+position = "top"
+thickness = 34
+background_opacity = 0.92
+radius = 12
+margin_ends = 12
+margin_edge = 5
+padding = 12
+widget_spacing = 6
+shadow = true
+reserve_space = true
+capsule = false
+start = ["launcher", "wallpaper", "workspaces"]
+center = ["media", "clock"]
+end = ["tray", "notifications", "clipboard", "network", "bluetooth", "volume", "brightness", "battery", "control-center", "session"]

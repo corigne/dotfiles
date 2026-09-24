@@ -1,0 +1,10 @@
+[Unit]
+Description=Waybar battery watcher
+PartOf=graphical-session.target
+After=graphical-session.target
+
+[Service]
+Type=simple
+ExecStart=%h/.config/waybar/battery-watcher.sh
+Restart=on-failure
+RestartSec=3

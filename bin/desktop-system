@@ -1,0 +1,280 @@
+#!/bin/sh
+set -eu
+
+repo_dir=$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)
+platform=${1:-}
+profile=${2:-}
+action=${3:-plan}
+state_root=${XDG_STATE_HOME:-"$HOME/.local/state"}/dotfiles/system
+
+usage() {
+    cat <<'EOF'
+Usage: desktop-system arch <niri|hypr> <check|plan|apply|verify|remove|rollback>
+
+Only desktop-profile packages, owned root templates, and owned services are
+managed. Unrelated packages and /etc files are never converged or removed.
+EOF
+}
+
+[ "$platform" = "arch" ] || { usage >&2; exit 2; }
+case "$profile" in niri|hypr) ;; *) usage >&2; exit 2 ;; esac
+
+native_manifest="$repo_dir/system/arch/packages/$profile.txt"
+aur_manifest="$repo_dir/system/arch/packages/$profile.aur.txt"
+profile_state="$state_root/$profile"
+installed_state="$profile_state/installed-packages"
+backup_state="$profile_state/backups"
+
+require_command() {
+    command -v "$1" >/dev/null 2>&1 || {
+        printf 'required command missing: %s\n' "$1" >&2
+        return 1
+    }
+}
+
+manifest_packages() {
+    manifest=$1
+    [ -f "$manifest" ] || return 0
+
+    while IFS= read -r package || [ -n "$package" ]; do
+        case "$package" in
+            ""|\#*) continue ;;
+            *) printf '%s\n' "$package" ;;
+        esac
+    done <"$manifest"
+}
+
+missing_packages() {
+    manifest=$1
+    manifest_packages "$manifest" | while IFS= read -r package; do
+        pacman -Q "$package" >/dev/null 2>&1 || printf '%s\n' "$package"
+    done
+}
+
+print_plan() {
+    printf '%s\n' "Native packages to install:"
+    missing_packages "$native_manifest"
+    printf '%s\n' "AUR packages to install:"
+    missing_packages "$aur_manifest"
+
+    if [ "$profile" = "niri" ]; then
+        printf '%s\n' "Root files to compare/install:"
+        printf '%s\n' "  /etc/greetd/config.toml"
+        printf '%s\n' "  /etc/xdg-desktop-portal/niri-portals.conf"
+        printf '%s\n' "  /var/lib/noctalia-greeter/greeter.toml"
+        printf '%s\n' "Service to enable after validation: greetd.service"
+    fi
+}
+
+install_manifest() {
+    manifest=$1
+    installer=$2
+    packages=$(missing_packages "$manifest")
+    [ -n "$packages" ] || return 0
+
+    # Package names are one-per-line repository-owned values.
+    # shellcheck disable=SC2086
+    $installer $packages
+
+    mkdir -p "$profile_state"
+    printf '%s\n' "$packages" >>"$installed_state"
+}
+
+record_backup() {
+    target=$1
+    sudo test -e "$target" || return 0
+    target_recorded "$target" && return 0
+
+    timestamp=$(date +%Y%m%d%H%M%S)
+    backup="${target}.dotfiles-backup-${timestamp}"
+    sudo cp -a "$target" "$backup"
+    mkdir -p "$profile_state"
+    printf '%s|%s\n' "$target" "$backup" >>"$backup_state"
+}
+
+target_recorded() {
+    wanted=$1
+    [ -f "$backup_state" ] || return 1
+
+    while IFS='|' read -r recorded_target _; do
+        [ "$recorded_target" = "$wanted" ] && return 0
+    done <"$backup_state"
+    return 1
+}
+
+install_root_file() {
+    source=$1
+    target=$2
+    mode=$3
+    owner=$4
+    group=$5
+
+    if sudo test -f "$target" && sudo cmp -s "$source" "$target"; then
+        return 0
+    fi
+
+    if sudo test -e "$target"; then
+        sudo diff -u "$target" "$source" || true
+        record_backup "$target"
+    else
+        if ! target_recorded "$target"; then
+            mkdir -p "$profile_state"
+            printf '%s|CREATED\n' "$target" >>"$backup_state"
+        fi
+    fi
+
+    sudo install -D -m "$mode" -o "$owner" -g "$group" "$source" "$target"
+}
+
+validate_niri_system() {
+    require_command niri
+    require_command noctalia
+    require_command noctalia-greeter-session
+    id greeter >/dev/null 2>&1 || {
+        printf '%s\n' "required greeter account missing: greeter" >&2
+        return 1
+    }
+    [ -f /usr/share/wayland-sessions/niri.desktop ] || {
+        printf '%s\n' "niri Wayland session desktop file missing" >&2
+        return 1
+    }
+    [ -f /etc/pam.d/greetd ] || {
+        printf '%s\n' "greetd PAM configuration missing" >&2
+        return 1
+    }
+
+    display_manager_link=/etc/systemd/system/display-manager.service
+    if [ -L "$display_manager_link" ]; then
+        display_manager=$(basename "$(readlink -f "$display_manager_link")")
+        [ "$display_manager" = "greetd.service" ] || {
+            printf 'another display manager is enabled: %s\n' "$display_manager" >&2
+            printf '%s\n' "Disable it explicitly before enabling greetd." >&2
+            return 1
+        }
+    fi
+}
+
+apply_niri_system() {
+    validate_niri_system
+
+    install_root_file \
+        "$repo_dir/system/arch/greetd/config.toml" \
+        /etc/greetd/config.toml 0644 root root
+    install_root_file \
+        "$repo_dir/system/arch/xdg-desktop-portal/niri-portals.conf" \
+        /etc/xdg-desktop-portal/niri-portals.conf 0644 root root
+    install_root_file \
+        "$repo_dir/system/arch/greetd/greeter.toml" \
+        /var/lib/noctalia-greeter/greeter.toml 0644 greeter greeter
+
+    sudo systemctl enable greetd.service
+}
+
+remove_profile_packages() {
+    [ -f "$installed_state" ] || {
+        printf '%s\n' "No profile-owned package record found."
+        return 0
+    }
+
+    other_profile=hypr
+    [ "$profile" = "hypr" ] && other_profile=niri
+    other_native="$repo_dir/system/arch/packages/$other_profile.txt"
+    other_aur="$repo_dir/system/arch/packages/$other_profile.aur.txt"
+    removable=
+
+    printf '%s\n' "Packages recorded as introduced by profile:"
+    while IFS= read -r package; do
+        [ -n "$package" ] || continue
+        shared=false
+        for manifest in "$other_native" "$other_aur"; do
+            while IFS= read -r other_package || [ -n "$other_package" ]; do
+                [ "$package" = "$other_package" ] && shared=true
+            done <"$manifest"
+        done
+
+        if [ "$shared" = true ]; then
+            printf '  keep shared package: %s\n' "$package"
+        else
+            printf '  remove candidate: %s\n' "$package"
+            removable="$removable $package"
+        fi
+    done <"$installed_state"
+
+    [ -n "$removable" ] || {
+        printf '%s\n' "No profile-exclusive packages to remove."
+        return 0
+    }
+
+    printf '%s' "Remove these packages with pacman -Rns? [y/N] "
+    read -r answer
+    case "$answer" in
+        y|Y|yes|YES)
+            # Show pacman's complete dependency-aware removal set before applying.
+            # shellcheck disable=SC2086
+            pacman -Rns --print --print-format '%n %v' $removable
+            printf '%s' "Proceed with complete removal set above? [y/N] "
+            read -r confirm
+            case "$confirm" in y|Y|yes|YES) ;; *) printf '%s\n' "Removal cancelled."; return 0 ;; esac
+            # shellcheck disable=SC2086
+            sudo pacman -Rns $removable
+            rm -f "$installed_state"
+            ;;
+        *) printf '%s\n' "Removal cancelled." ;;
+    esac
+}
+
+rollback_files() {
+    [ -f "$backup_state" ] || {
+        printf '%s\n' "No root-file backups recorded."
+        return 0
+    }
+
+    while IFS='|' read -r target backup; do
+        [ -n "$target" ] && [ -n "$backup" ] || continue
+        if [ "$backup" = "CREATED" ]; then
+            sudo rm -f "$target"
+        else
+            sudo cp -a "$backup" "$target"
+        fi
+    done <"$backup_state"
+    rm -f "$backup_state"
+}
+
+case "$action" in
+    check)
+        require_command pacman
+        require_command stow
+        [ -f "$native_manifest" ]
+        [ -f "$aur_manifest" ]
+        ;;
+    plan)
+        require_command pacman
+        print_plan
+        ;;
+    apply)
+        require_command pacman
+        install_manifest "$native_manifest" "sudo pacman -S --needed"
+        if [ -n "$(missing_packages "$aur_manifest")" ]; then
+            require_command paru
+            install_manifest "$aur_manifest" "paru -S --needed"
+        fi
+        if [ "$profile" = "niri" ]; then
+            apply_niri_system
+        fi
+        ;;
+    verify)
+        if [ "$profile" = "niri" ]; then
+            validate_niri_system
+        fi
+        ;;
+    remove)
+        remove_profile_packages
+        ;;
+    rollback)
+        rollback_files
+        ;;
+    *)
+        usage >&2
+        exit 2
+        ;;
+esac
