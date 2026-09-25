@@ -291,7 +291,7 @@ hotkey-overlay {
 prefer-no-csd
 
 blur {
-    offset 1.5
+    offset 0.75
 }
 
 // You can change the path where screenshots are saved.
