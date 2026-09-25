@@ -24,6 +24,7 @@ window-rule {
 // Ignore application requests to make the first column fill the output.
 window-rule {
     open-maximized false
+    open-maximized-to-edges false
 }
 
 window-rule {
