@@ -66,6 +66,12 @@ enabled = true
 [audio]
 enable_overdrive = false
 
+[location]
+auto_locate = true
+
+[weather]
+enabled = true
+
 [idle.behavior.lock]
 timeout = 600
 action = "lock"

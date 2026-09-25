@@ -44,6 +44,7 @@ input {
         // accel-profile "flat"
         // pinch-sensitivity 1.0
         // scroll-method "two-finger"
+        click-method "clickfinger"
         // disabled-on-external-mouse
     }
 
@@ -386,9 +387,9 @@ binds {
     Mod+Alt+Escape hotkey-overlay-title="Random Animated Wallpaper" { spawn "noctalia-wallpaper-random" "/home/nexus/Pictures/animated_slideshow"; }
     Mod+Ctrl+Period hotkey-overlay-title="Next Wallpaper" { spawn "noctalia" "msg" "wallpaper-next"; }
 
-    Mod+F2 { spawn "playerctl" "--player=spotify,vlc,audacious" "previous"; }
-    Mod+F3 { spawn "playerctl" "--player=spotify,vlc,audacious" "next"; }
-    Mod+F4 { spawn "playerctl" "--player=spotify,vlc,audacious" "play-pause"; }
+    Mod+F2 hotkey-overlay-title="Previous Media Track" { spawn "playerctl" "--player=spotify,vlc,audacious" "previous"; }
+    Mod+F3 hotkey-overlay-title="Next Media Track" { spawn "playerctl" "--player=spotify,vlc,audacious" "next"; }
+    Mod+F4 hotkey-overlay-title="Play or Pause Media" { spawn "playerctl" "--player=spotify,vlc,audacious" "play-pause"; }
 
     // Use spawn-sh to run a shell command. Do this if you need pipes, multiple commands, etc.
     // Note: the entire command goes as a single argument. It's passed verbatim to `sh -c`.
@@ -399,18 +400,18 @@ binds {
     // The allow-when-locked=true property makes them work even when the session is locked.
     // Using spawn-sh allows to pass multiple arguments together with the command.
     // "-l 1.0" limits the volume to 100%.
-    XF86AudioRaiseVolume allow-when-locked=true { spawn-sh "wpctl set-volume @DEFAULT_AUDIO_SINK@ 0.1+ -l 1.0"; }
-    XF86AudioLowerVolume allow-when-locked=true { spawn-sh "wpctl set-volume @DEFAULT_AUDIO_SINK@ 0.1-"; }
-    XF86AudioMute        allow-when-locked=true { spawn-sh "wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle"; }
-    XF86AudioMicMute     allow-when-locked=true { spawn-sh "wpctl set-mute @DEFAULT_AUDIO_SOURCE@ toggle"; }
+    XF86AudioRaiseVolume allow-when-locked=true hotkey-overlay-title="Raise Volume" { spawn-sh "wpctl set-volume @DEFAULT_AUDIO_SINK@ 0.1+ -l 1.0"; }
+    XF86AudioLowerVolume allow-when-locked=true hotkey-overlay-title="Lower Volume" { spawn-sh "wpctl set-volume @DEFAULT_AUDIO_SINK@ 0.1-"; }
+    XF86AudioMute        allow-when-locked=true hotkey-overlay-title="Mute or Unmute Audio" { spawn-sh "wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle"; }
+    XF86AudioMicMute     allow-when-locked=true hotkey-overlay-title="Mute or Unmute Microphone" { spawn-sh "wpctl set-mute @DEFAULT_AUDIO_SOURCE@ toggle"; }
 
     // Example media keys mapping using playerctl.
     // This will work with any MPRIS-enabled media player.
-    XF86AudioPlay        allow-when-locked=true { spawn-sh "playerctl play-pause"; }
-    XF86AudioPause       allow-when-locked=true { spawn-sh "playerctl play-pause"; }
-    XF86AudioStop        allow-when-locked=true { spawn-sh "playerctl stop"; }
-    XF86AudioPrev        allow-when-locked=true { spawn-sh "playerctl previous"; }
-    XF86AudioNext        allow-when-locked=true { spawn-sh "playerctl next"; }
+    XF86AudioPlay        allow-when-locked=true hotkey-overlay-title="Play or Pause Media" { spawn-sh "playerctl play-pause"; }
+    XF86AudioPause       allow-when-locked=true hotkey-overlay-title="Play or Pause Media" { spawn-sh "playerctl play-pause"; }
+    XF86AudioStop        allow-when-locked=true hotkey-overlay-title="Stop Media" { spawn-sh "playerctl stop"; }
+    XF86AudioPrev        allow-when-locked=true hotkey-overlay-title="Previous Media Track" { spawn-sh "playerctl previous"; }
+    XF86AudioNext        allow-when-locked=true hotkey-overlay-title="Next Media Track" { spawn-sh "playerctl next"; }
 
     // Let Noctalia select the current monitor's backend and show its OSD.
     XF86MonBrightnessUp allow-when-locked=true { spawn "noctalia" "msg" "brightness-up"; }
