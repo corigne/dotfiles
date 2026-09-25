@@ -10,7 +10,7 @@ window-rule {
 
 window-rule {
     match is-focused=false
-    opacity 0.89375
+    opacity 0.725
 }
 
 window-rule {
