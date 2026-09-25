@@ -10,12 +10,12 @@ window-rule {
 
 window-rule {
     match is-focused=false
-    opacity 0.95
+    opacity 0.89375
 }
 
 window-rule {
     match is-focused=true
-    opacity 0.90
+    opacity 0.875
 }
 
 // Keep applications that should never blend with the desktop fully opaque.
