@@ -9,11 +9,11 @@ window-rule {
     opacity 0.875
 }
 
-// Full-opacity applications. Prefer anchored app IDs over changing titles.
+// Full-opacity media, games, and color-critical applications.
 window-rule {
     match app-id=r#"^(feh|vimiv|net-runelite-client-RuneLite|jagexlauncher\.exe)$"#
     match app-id=r#"^(virt-manager|qemu|remote-viewer|qv4l2|gimp|swayimg)$"#
-    match app-id=r#"^(obsidian|firefox|org\.vinegarhq\.Sober|robloxstudiobeta\.exe)$"#
+    match app-id=r#"^(org\.vinegarhq\.Sober|robloxstudiobeta\.exe)$"#
     match app-id=r#"^(org\.remmina\.Remmina|mpv|vlc|krita|steam_app_881100)$"#
     match app-id=r#"^(rsi launcher\.exe|org\.jellyfin\.JellyfinDesktop)$"#
     match app-id=r#"^(org\.darktable\.darktable|scrcpy|zoom)$"#

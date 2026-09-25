@@ -105,11 +105,10 @@ collection. `Mod+Ctrl+Period` advances immediately in both desktop profiles.
 Canonical niri keeps `Mod+Escape` for shortcut-inhibit toggling. The default
 automation interval is five minutes.
 
-`wluma` remains host-local because its backlight, camera, and GPU devices vary.
-On the current Intel/NVIDIA host, set the `eDP-1` output to `capturer = "none"`.
-Wayland screen capture otherwise imports Intel compositor frames through the
-NVIDIA Vulkan device and aborts Mesa fence creation. Ambient webcam adjustment
-still works; only screen-content compensation is disabled.
+`wluma` is not started by either desktop profile. Webcam ALS caused distracting
+camera activity, Noctalia displayed an OSD for every automatic brightness
+change, and screen capture exposed a Mesa fence failure on the hybrid-GPU
+laptop. Noctalia owns manual brightness controls instead.
 
 ## Multi-host rollout
 
