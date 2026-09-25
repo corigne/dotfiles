@@ -83,8 +83,9 @@ them only inside its own session.
 Noctalia rotates `~/.config/noctalia/local.toml`'s wallpaper directory
 automatically. Use `Mod+Ctrl+Escape` for the main collection,
 `Mod+Shift+Escape` for the SFW collection, and `Mod+Alt+Escape` for the animated
-collection. Canonical niri keeps `Mod+Escape` for shortcut-inhibit toggling.
-The default automation interval is five minutes.
+collection. `Mod+Ctrl+Period` advances immediately in both desktop profiles.
+Canonical niri keeps `Mod+Escape` for shortcut-inhibit toggling. The default
+automation interval is five minutes.
 
 `wluma` remains host-local because its backlight, camera, and GPU devices vary.
 On the current Intel/NVIDIA host, set the `eDP-1` output to `capturer = "none"`.

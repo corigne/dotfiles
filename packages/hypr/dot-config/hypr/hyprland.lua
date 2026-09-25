@@ -270,7 +270,8 @@ hl.bind(mainMod .. " + d", hl.dsp.exec_cmd(menu))
 hl.bind(mainMod .. " + SHIFT + d", hl.dsp.exec_cmd(amenu))
 
 -- Slideshow controls
-hl.bind(mainMod .. " + ESCAPE", hl.dsp.exec_cmd("awww-slideshow-control resume"))
+hl.bind(mainMod .. " + ESCAPE", hl.dsp.exec_cmd("awww-slideshow-control next"))
+hl.bind(mainMod .. " + CTRL + PERIOD", hl.dsp.exec_cmd("awww-slideshow-control next"))
 hl.bind(mainMod .. " + CTRL + ESCAPE",
     hl.dsp.exec_cmd("awww-slideshow-control stop; awww-slideshow ~/Pictures/slideshow " .. gowall_theme))
 hl.bind(mainMod .. " + SHIFT + ESCAPE",

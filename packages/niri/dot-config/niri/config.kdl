@@ -381,6 +381,7 @@ binds {
     Mod+Ctrl+Escape hotkey-overlay-title="Random Home Wallpaper" { spawn "noctalia" "msg" "wallpaper-random"; }
     Mod+Shift+Escape hotkey-overlay-title="Random SFW Wallpaper" { spawn "noctalia-wallpaper-random" "/home/nexus/Pictures/sfw"; }
     Mod+Alt+Escape hotkey-overlay-title="Random Animated Wallpaper" { spawn "noctalia-wallpaper-random" "/home/nexus/Pictures/animated_slideshow"; }
+    Mod+Ctrl+Period hotkey-overlay-title="Next Wallpaper" { spawn "noctalia" "msg" "wallpaper-next"; }
 
     Mod+F2 { spawn "playerctl" "--player=spotify,vlc,audacious" "previous"; }
     Mod+F3 { spawn "playerctl" "--player=spotify,vlc,audacious" "next"; }
