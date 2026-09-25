@@ -96,4 +96,4 @@ reserve_space = true
 capsule = false
 start = ["launcher", "wallpaper", "workspaces"]
 center = ["media"]
-end = ["clock", "tray", "notifications", "clipboard", "network", "bluetooth", "volume", "brightness", "battery", "control-center", "session"]
+end = ["weather", "clock", "tray", "notifications", "clipboard", "network", "bluetooth", "volume", "brightness", "battery", "control-center", "session"]
