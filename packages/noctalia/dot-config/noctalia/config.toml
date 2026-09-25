@@ -94,6 +94,6 @@ widget_spacing = 10
 shadow = true
 reserve_space = true
 capsule = false
-start = ["weather", "clock", "launcher", "wallpaper", "workspaces"]
+start = ["clock", "weather", "launcher", "wallpaper", "workspaces"]
 center = ["media"]
 end = ["tray", "notifications", "clipboard", "network", "bluetooth", "volume", "brightness", "battery", "control-center", "session"]
