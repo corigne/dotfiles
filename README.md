@@ -130,6 +130,10 @@ Before applying on `ishimura`:
 4. compare results with current-host trial findings;
 5. apply without copying current host's generated Noctalia state.
 
+The current inventory, preservation requirements, staged cutover, acceptance
+gates, and rollback procedure are documented in
+[`docs/ishimura-migration.md`](docs/ishimura-migration.md).
+
 ### Existing installations
 
 The old repository layout used `stow --dotfiles .`. Preview its one-time
