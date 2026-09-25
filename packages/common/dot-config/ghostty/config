@@ -51,6 +51,7 @@ font-feature = "ss02" on
 
 window-padding-x = 6
 window-padding-y = 6
+window-decoration = none
 
 window-save-state = never
 working-directory = home
