@@ -1,6 +1,10 @@
 // Rules are processed top-to-bottom. Put broad opacity first, then exceptions.
 
 window-rule {
+    draw-border-with-background false
+}
+
+window-rule {
     match is-focused=false
     opacity 0.75
 }
