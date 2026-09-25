@@ -3,6 +3,10 @@
 // Check the wiki for a full description of the configuration:
 // https://niri-wm.github.io/niri/Configuration:-Introduction
 
+environment {
+    PATH "/home/nexus/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/bin"
+}
+
 // Input device configuration.
 // Find the full list of options on the wiki:
 // https://niri-wm.github.io/niri/Configuration:-Input
@@ -268,14 +272,16 @@ layout {
 // which may be more convenient to use.
 // See the binds section below for more spawn examples.
 
+spawn-at-startup "awww-slideshow-control" "stop"
 spawn-at-startup "noctalia"
+spawn-at-startup "systemctl" "--user" "start" "wluma.service"
 
 // To run a shell command (with variables, pipes, etc.), use spawn-sh-at-startup:
 // spawn-sh-at-startup "qs -c ~/source/qs/MyAwesomeShell"
 
 hotkey-overlay {
-    // Uncomment this line to disable the "Important Hotkeys" pop-up at startup.
-    // skip-at-startup
+    skip-at-startup
+    hide-not-bound
 }
 
 // Uncomment this line to ask the clients to omit their client-side decorations if possible.
@@ -372,6 +378,9 @@ binds {
     Mod+Shift+N hotkey-overlay-title="Open Thunar" { spawn "thunar"; }
     Mod+Shift+D hotkey-overlay-title="Open Noctalia Control Center" { spawn "noctalia" "msg" "panel-toggle" "control-center"; }
     Mod+Alt+V hotkey-overlay-title="Open Clipboard History" { spawn "noctalia" "msg" "panel-toggle" "clipboard"; }
+    Mod+Ctrl+Escape hotkey-overlay-title="Random Home Wallpaper" { spawn "noctalia" "msg" "wallpaper-random"; }
+    Mod+Shift+Escape hotkey-overlay-title="Random SFW Wallpaper" { spawn "noctalia-wallpaper-random" "/home/nexus/Pictures/sfw"; }
+    Mod+Alt+Escape hotkey-overlay-title="Random Animated Wallpaper" { spawn "noctalia-wallpaper-random" "/home/nexus/Pictures/animated_slideshow"; }
 
     Mod+F2 { spawn "playerctl" "--player=spotify,vlc,audacious" "previous"; }
     Mod+F3 { spawn "playerctl" "--player=spotify,vlc,audacious" "next"; }

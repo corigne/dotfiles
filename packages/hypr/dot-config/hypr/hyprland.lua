@@ -22,6 +22,16 @@ hl.env("XDG_SESSION_DESKTOP", "Hyprland")
 
 local xdg_runtime_dir = os.getenv("XDG_RUNTIME_DIR") or ""
 local ssh_auth_sock   = xdg_runtime_dir .. "/ssh-agent.socket"
+local home            = os.getenv("HOME") or "/home/nexus"
+local path_entries     = { home .. "/.local/bin" }
+local seen_paths       = { [path_entries[1]] = true }
+for entry in (os.getenv("PATH") or "/usr/local/sbin:/usr/local/bin:/usr/bin"):gmatch("[^:]+") do
+    if not seen_paths[entry] then
+        table.insert(path_entries, entry)
+        seen_paths[entry] = true
+    end
+end
+hl.env("PATH", table.concat(path_entries, ":"))
 hl.env("SSH_AUTH_SOCK", ssh_auth_sock)
 hl.env("SSH_AGENT_SOCK", ssh_auth_sock)
 
@@ -64,6 +74,7 @@ hl.on("hyprland.start", function()
     hl.exec_cmd("hypridle")
     hl.exec_cmd("systemctl --user start hyprpolkitagent.service")
     hl.exec_cmd("systemctl --user start waybar-battery-watcher.service")
+    hl.exec_cmd("systemctl --user start wluma.service")
     hl.exec_cmd("hyprctl setcursor catppuccin-frappe-sapphire 24")
     hl.exec_cmd("mako")
     hl.exec_cmd("dex -a")
@@ -80,6 +91,9 @@ local function ensure_procs()
 end
 hl.on("hyprland.start", ensure_procs)
 hl.on("config.reloaded", ensure_procs)
+hl.on("hyprland.exit", function()
+    hl.exec_cmd("awww-slideshow-control stop")
+end)
 
 -----------------------
 ---- LOOK AND FEEL ----

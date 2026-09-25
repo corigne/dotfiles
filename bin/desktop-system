@@ -61,7 +61,11 @@ print_plan() {
         printf '%s\n' "Root files to compare/install:"
         printf '%s\n' "  /etc/greetd/config.toml"
         printf '%s\n' "  /etc/xdg-desktop-portal/niri-portals.conf"
+        printf '%s\n' "  /var/lib/AccountsService/users/greetduser"
         printf '%s\n' "  /var/lib/noctalia-greeter/greeter.toml"
+        printf '%s\n' "  /usr/share/wayland-sessions/hyprland-uwsm.desktop"
+        printf '%s\n' "  /usr/local/lib/dotfiles/hide-hyprland-uwsm"
+        printf '%s\n' "  /etc/pacman.d/hooks/90-hide-hyprland-uwsm.hook"
         printf '%s\n' "Service to enable after validation: greetd.service"
     fi
 }
@@ -132,8 +136,8 @@ validate_niri_system() {
     require_command niri
     require_command noctalia
     require_command noctalia-greeter-session
-    id greetduser >/dev/null 2>&1 || {
-        printf '%s\n' "required greeter account missing: greetduser" >&2
+    id greeter >/dev/null 2>&1 || {
+        printf '%s\n' "required greeter account missing: greeter" >&2
         return 1
     }
     [ -f /usr/share/wayland-sessions/niri.desktop ] || {
@@ -165,10 +169,23 @@ apply_niri_system() {
     install_root_file \
         "$repo_dir/system/arch/xdg-desktop-portal/niri-portals.conf" \
         /etc/xdg-desktop-portal/niri-portals.conf 0644 root root
-    sudo install -d -m 0750 -o greetduser -g greetduser /var/lib/noctalia-greeter
+    install_root_file \
+        "$repo_dir/system/arch/accountsservice/greetduser" \
+        /var/lib/AccountsService/users/greetduser 0600 root root
+    install_root_file \
+        "$repo_dir/system/arch/wayland-sessions/hyprland-uwsm.desktop" \
+        /usr/share/wayland-sessions/hyprland-uwsm.desktop 0644 root root
+    install_root_file \
+        "$repo_dir/system/arch/libexec/hide-hyprland-uwsm" \
+        /usr/local/lib/dotfiles/hide-hyprland-uwsm 0755 root root
+    install_root_file \
+        "$repo_dir/system/arch/pacman-hooks/90-hide-hyprland-uwsm.hook" \
+        /etc/pacman.d/hooks/90-hide-hyprland-uwsm.hook 0644 root root
+    sudo install -d -m 0750 -o greeter -g greeter /var/lib/noctalia-greeter
     install_root_file \
         "$repo_dir/system/arch/greetd/greeter.toml" \
-        /var/lib/noctalia-greeter/greeter.toml 0644 greetduser greetduser
+        /var/lib/noctalia-greeter/greeter.toml 0644 greeter greeter
+    sudo chown -R greeter:greeter /var/lib/noctalia-greeter
 }
 
 verify_root_file() {
@@ -195,7 +212,15 @@ verify_niri_system() {
     validate_niri_system
     verify_root_file "$repo_dir/system/arch/greetd/config.toml" /etc/greetd/config.toml 644 root root
     verify_root_file "$repo_dir/system/arch/xdg-desktop-portal/niri-portals.conf" /etc/xdg-desktop-portal/niri-portals.conf 644 root root
-    verify_root_file "$repo_dir/system/arch/greetd/greeter.toml" /var/lib/noctalia-greeter/greeter.toml 644 greetduser greetduser
+    verify_root_file "$repo_dir/system/arch/accountsservice/greetduser" /var/lib/AccountsService/users/greetduser 600 root root
+    verify_root_file "$repo_dir/system/arch/wayland-sessions/hyprland-uwsm.desktop" /usr/share/wayland-sessions/hyprland-uwsm.desktop 644 root root
+    verify_root_file "$repo_dir/system/arch/libexec/hide-hyprland-uwsm" /usr/local/lib/dotfiles/hide-hyprland-uwsm 755 root root
+    verify_root_file "$repo_dir/system/arch/pacman-hooks/90-hide-hyprland-uwsm.hook" /etc/pacman.d/hooks/90-hide-hyprland-uwsm.hook 644 root root
+    verify_root_file "$repo_dir/system/arch/greetd/greeter.toml" /var/lib/noctalia-greeter/greeter.toml 644 greeter greeter
+    [ "$(sudo stat -c '%U:%G %a' /var/lib/noctalia-greeter)" = "greeter:greeter 750" ] || {
+        printf '%s\n' "greeter state directory has wrong owner or mode" >&2
+        return 1
+    }
 }
 
 activate_niri_system() {

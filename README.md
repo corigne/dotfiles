@@ -61,7 +61,9 @@ During evaluation, keep both greeter sessions usable:
 ```
 
 `trial` installs both desktop configs but does not start either desktop's
-components globally. After accepting niri, switch to strict `niri`.
+components globally. Greeter exposes plain Hyprland as fallback while hiding
+the unused UWSM-managed duplicate. After accepting niri, switch to strict
+`niri`.
 
 Other commands:
 
@@ -77,6 +79,18 @@ Profile switching removes links from the previously recorded profile, links the
 new profile, and keeps shared files through `common`. It also disables and
 stops globally enabled Hypr-only user services when selecting niri. Hypr starts
 them only inside its own session.
+
+Noctalia rotates `~/.config/noctalia/local.toml`'s wallpaper directory
+automatically. Use `Mod+Ctrl+Escape` for the main collection,
+`Mod+Shift+Escape` for the SFW collection, and `Mod+Alt+Escape` for the animated
+collection. Canonical niri keeps `Mod+Escape` for shortcut-inhibit toggling.
+The default automation interval is five minutes.
+
+`wluma` remains host-local because its backlight, camera, and GPU devices vary.
+On the current Intel/NVIDIA host, set the `eDP-1` output to `capturer = "none"`.
+Wayland screen capture otherwise imports Intel compositor frames through the
+NVIDIA Vulkan device and aborts Mesa fence creation. Ambient webcam adjustment
+still works; only screen-content compensation is disabled.
 
 ## Multi-host rollout
 
