@@ -61,7 +61,6 @@ print_plan() {
         printf '%s\n' "Root files to compare/install:"
         printf '%s\n' "  /etc/greetd/config.toml"
         printf '%s\n' "  /etc/xdg-desktop-portal/niri-portals.conf"
-        printf '%s\n' "  /var/lib/AccountsService/users/greetduser"
         printf '%s\n' "  /var/lib/noctalia-greeter/greeter.toml"
         printf '%s\n' "  /usr/share/wayland-sessions/hyprland-uwsm.desktop"
         printf '%s\n' "  /usr/local/lib/dotfiles/hide-hyprland-uwsm"
@@ -169,9 +168,9 @@ apply_niri_system() {
     install_root_file \
         "$repo_dir/system/arch/xdg-desktop-portal/niri-portals.conf" \
         /etc/xdg-desktop-portal/niri-portals.conf 0644 root root
-    install_root_file \
-        "$repo_dir/system/arch/accountsservice/greetduser" \
-        /var/lib/AccountsService/users/greetduser 0600 root root
+    if getent passwd greetduser >/dev/null; then
+        sudo usermod --shell /usr/bin/nologin greetduser
+    fi
     install_root_file \
         "$repo_dir/system/arch/wayland-sessions/hyprland-uwsm.desktop" \
         /usr/share/wayland-sessions/hyprland-uwsm.desktop 0644 root root
@@ -212,7 +211,12 @@ verify_niri_system() {
     validate_niri_system
     verify_root_file "$repo_dir/system/arch/greetd/config.toml" /etc/greetd/config.toml 644 root root
     verify_root_file "$repo_dir/system/arch/xdg-desktop-portal/niri-portals.conf" /etc/xdg-desktop-portal/niri-portals.conf 644 root root
-    verify_root_file "$repo_dir/system/arch/accountsservice/greetduser" /var/lib/AccountsService/users/greetduser 600 root root
+    if getent passwd greetduser >/dev/null; then
+        [ "$(getent passwd greetduser | cut -d: -f7)" = "/usr/bin/nologin" ] || {
+            printf '%s\n' "greetduser must use /usr/bin/nologin" >&2
+            return 1
+        }
+    fi
     verify_root_file "$repo_dir/system/arch/wayland-sessions/hyprland-uwsm.desktop" /usr/share/wayland-sessions/hyprland-uwsm.desktop 644 root root
     verify_root_file "$repo_dir/system/arch/libexec/hide-hyprland-uwsm" /usr/local/lib/dotfiles/hide-hyprland-uwsm 755 root root
     verify_root_file "$repo_dir/system/arch/pacman-hooks/90-hide-hyprland-uwsm.hook" /etc/pacman.d/hooks/90-hide-hyprland-uwsm.hook 644 root root

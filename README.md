@@ -367,6 +367,12 @@ Noctalia Greeter appearance sync remains authenticated by default. Do not add a
 passwordless Polkit rule until installed shell and greeter versions support the
 constrained sync action documented upstream.
 
+The Arch adapter also changes the unused legacy `greetduser` account to
+`/usr/bin/nologin` when that account exists. Noctalia Greeter enumerates NSS
+users with UID 1000 or higher, so an interactive shell would expose that service
+account in the account picker even when AccountsService marks it as a system
+account.
+
 ## Portals
 
 Niri uses:
@@ -378,6 +384,12 @@ Niri uses:
 Policy is explicit in
 `system/arch/xdg-desktop-portal/niri-portals.conf`. The niri session must not
 start or select `xdg-desktop-portal-hyprland`.
+
+The niri package includes a scoped `xdg-desktop-portal-gnome` service override
+with `GDK_DEBUG=no-portals`. Without it, GTK inside the GNOME backend queries the
+portal frontend while that frontend is still waiting for the backend, adding a
+25-second D-Bus timeout to login and application startup. The override affects
+only the portal implementation; applications continue to use portals normally.
 
 ## Scripts submodule
 
