@@ -2,6 +2,10 @@
 
 window-rule {
     draw-border-with-background false
+
+    background-effect {
+        blur true
+    }
 }
 
 window-rule {
