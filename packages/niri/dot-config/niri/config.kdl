@@ -273,7 +273,7 @@ layout {
 // See the binds section below for more spawn examples.
 
 spawn-at-startup "awww-slideshow-control" "stop"
-spawn-at-startup "noctalia"
+spawn-at-startup "systemctl" "--user" "restart" "noctalia.service"
 
 // To run a shell command (with variables, pipes, etc.), use spawn-sh-at-startup:
 // spawn-sh-at-startup "qs -c ~/source/qs/MyAwesomeShell"

@@ -110,6 +110,15 @@ camera activity, Noctalia displayed an OSD for every automatic brightness
 change, and screen capture exposed a Mesa fence failure on the hybrid-GPU
 laptop. Noctalia owns manual brightness controls instead.
 
+Noctalia runs as a Niri-started user service with `Restart=on-failure`.
+Noctalia 5.1 can disconnect from Niri while acquiring the session lock before
+suspend: Niri reports `ext_session_lock_v1` error 3 (`DUPLICATE_OUTPUT`), which
+removes the bar and wallpaper together. The service is a temporary recovery
+measure for the upstream lock lifecycle bug; it is not enabled globally and
+therefore does not start in Hyprland. Remove the service and restore direct
+Niri startup after the upstream fix is installed and a suspend/resume test
+passes.
+
 ## Multi-host rollout
 
 Trial niri + Noctalia on the current host first. `ishimura` is the next Arch
