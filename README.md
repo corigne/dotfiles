@@ -282,6 +282,10 @@ cp ~/.config/niri/local.example.kdl ~/.config/niri/local.kdl
 `local.kdl` is ignored by Git and Stow. Keep output names, monitor modes, GPU
 details, touchpad quirks, and TrackPoint settings there.
 
+Niri replaces a complete device block when a later included `input` section
+defines the same device type. Keep all effective touchpad options together in
+`local.kdl`; otherwise its `touchpad` block will replace shared touchpad values.
+
 Validate after changes:
 
 ```sh

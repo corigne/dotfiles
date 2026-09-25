@@ -17,6 +17,7 @@ input {
         // disabled by omitting them.
         accel-speed 0.25
         scroll-factor 0.4
+        click-method "clickfinger"
     }
 
     trackpoint {
