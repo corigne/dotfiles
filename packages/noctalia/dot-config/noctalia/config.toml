@@ -72,6 +72,18 @@ auto_locate = true
 [weather]
 enabled = true
 
+[widget.media-weather-gap-left]
+type = "spacer"
+length = 6
+
+[widget.media-weather-divider]
+type = "text"
+text = "|"
+
+[widget.media-weather-gap-right]
+type = "spacer"
+length = 6
+
 [idle.behavior.lock]
 timeout = 600
 action = "lock"
@@ -94,6 +106,6 @@ widget_spacing = 10
 shadow = true
 reserve_space = true
 capsule = false
-start = ["clock", "weather", "launcher", "wallpaper", "workspaces"]
-center = ["media"]
+start = ["clock", "launcher", "wallpaper", "workspaces"]
+center = ["media", "media-weather-gap-left", "media-weather-divider", "media-weather-gap-right", "weather"]
 end = ["tray", "notifications", "clipboard", "network", "bluetooth", "volume", "brightness", "battery", "control-center", "session"]
