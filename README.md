@@ -40,6 +40,24 @@ sudo pacman -S --needed git stow
 
 No Python provisioning framework is required.
 
+## Quick start
+
+Keep Hypr available during the trial:
+
+```sh
+cd ~/.dotfiles
+./bin/dotfiles-profile plan trial
+./bin/dotfiles-profile apply trial
+./bin/desktop-system arch niri plan
+./bin/desktop-system arch niri apply
+./bin/desktop-system arch niri verify
+./bin/desktop-system arch niri activate
+```
+
+Review each plan before applying it. `activate` enables greetd for the next
+boot; it does not replace the current session. Select **Niri** in Noctalia
+Greeter. Plain **Hyprland** remains available as fallback.
+
 ## Apply a user profile
 
 Preview first:
@@ -203,11 +221,43 @@ added only where upstream has no equivalent:
 | `Mod+Shift+D` | Noctalia control center |
 | `Mod+Alt+V` | Noctalia clipboard |
 | `Mod+F2/F3/F4` | Previous/next/play-pause |
+| `Mod+Ctrl+Escape` | Random main wallpaper |
+| `Mod+Shift+Escape` | Random SFW wallpaper |
+| `Mod+Alt+Escape` | Random animated wallpaper |
+| `Mod+Ctrl+Period` | Next wallpaper |
 
 Navigation, movement, workspaces, overview, consume/expel, sizing, floating,
 tabbed columns, screenshots, and session exit retain niri's upstream bindings.
 The old i3 and current Hypr configs are references for missing actions, not
 templates for forcing niri into an i3 layout.
+
+### First-login cheatsheet
+
+Press `Mod+Shift+Slash` (usually `Mod+?`) to open niri's built-in hotkey
+cheatsheet. It shows only active bindings and can be reopened at any time. From
+a terminal inside niri, the equivalent command is:
+
+```sh
+niri msg action show-hotkey-overlay
+```
+
+Useful canonical starting points:
+
+| Binding | Action |
+|---|---|
+| `Mod+Shift+Slash` | Open hotkey cheatsheet |
+| `Mod+O` | Toggle overview |
+| `Mod+Q` | Close focused window |
+| `Mod+H/J/K/L` or arrows | Move focus |
+| `Mod+Ctrl+H/J/K/L` or arrows | Move column/window |
+| `Mod+PageUp/PageDown` | Change workspace |
+| `Mod+R` | Cycle preset column widths |
+| `Mod+F` | Maximize column |
+| `Mod+Shift+F` | Fullscreen window |
+| `Mod+V` | Toggle window floating |
+| `Mod+Shift+E` | Exit niri with confirmation |
+
+Use the overlay as source of truth; this table is only a learning shortlist.
 
 ### Machine-local niri settings
 
