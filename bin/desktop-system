@@ -62,7 +62,9 @@ print_plan() {
         printf '%s\n' "  /etc/greetd/config.toml"
         printf '%s\n' "  /etc/xdg-desktop-portal/niri-portals.conf"
         printf '%s\n' "  /var/lib/noctalia-greeter/greeter.toml"
+        printf '%s\n' "  /usr/share/wayland-sessions/niri.desktop"
         printf '%s\n' "  /usr/share/wayland-sessions/hyprland-uwsm.desktop"
+        printf '%s\n' "  /usr/local/lib/dotfiles/niri-session"
         printf '%s\n' "  /usr/local/lib/dotfiles/hide-hyprland-uwsm"
         printf '%s\n' "  /etc/pacman.d/hooks/90-hide-hyprland-uwsm.hook"
         printf '%s\n' "Service to enable after validation: greetd.service"
@@ -172,8 +174,14 @@ apply_niri_system() {
         sudo usermod --shell /usr/bin/nologin greetduser
     fi
     install_root_file \
+        "$repo_dir/system/arch/wayland-sessions/niri.desktop" \
+        /usr/share/wayland-sessions/niri.desktop 0644 root root
+    install_root_file \
         "$repo_dir/system/arch/wayland-sessions/hyprland-uwsm.desktop" \
         /usr/share/wayland-sessions/hyprland-uwsm.desktop 0644 root root
+    install_root_file \
+        "$repo_dir/system/arch/libexec/niri-session" \
+        /usr/local/lib/dotfiles/niri-session 0755 root root
     install_root_file \
         "$repo_dir/system/arch/libexec/hide-hyprland-uwsm" \
         /usr/local/lib/dotfiles/hide-hyprland-uwsm 0755 root root
@@ -217,7 +225,9 @@ verify_niri_system() {
             return 1
         }
     fi
+    verify_root_file "$repo_dir/system/arch/wayland-sessions/niri.desktop" /usr/share/wayland-sessions/niri.desktop 644 root root
     verify_root_file "$repo_dir/system/arch/wayland-sessions/hyprland-uwsm.desktop" /usr/share/wayland-sessions/hyprland-uwsm.desktop 644 root root
+    verify_root_file "$repo_dir/system/arch/libexec/niri-session" /usr/local/lib/dotfiles/niri-session 755 root root
     verify_root_file "$repo_dir/system/arch/libexec/hide-hyprland-uwsm" /usr/local/lib/dotfiles/hide-hyprland-uwsm 755 root root
     verify_root_file "$repo_dir/system/arch/pacman-hooks/90-hide-hyprland-uwsm.hook" /etc/pacman.d/hooks/90-hide-hyprland-uwsm.hook 644 root root
     verify_root_file "$repo_dir/system/arch/greetd/greeter.toml" /var/lib/noctalia-greeter/greeter.toml 644 greeter greeter

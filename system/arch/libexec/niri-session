@@ -1,0 +1,8 @@
+#!/bin/sh
+set -eu
+
+[ -z "${XDG_SESSION_ID:-}" ] || systemctl --user import-environment XDG_SESSION_ID
+[ -z "${XDG_SEAT:-}" ] || systemctl --user import-environment XDG_SEAT
+[ -z "${XDG_VTNR:-}" ] || systemctl --user import-environment XDG_VTNR
+
+exec /usr/bin/niri-session "$@"
