@@ -1,3 +1,4 @@
 noctalia-greeter
 mpvpaper
 wayfreeze-git
+xwayland-satellite-git

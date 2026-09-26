@@ -178,6 +178,10 @@ Its scope stops there. It never inventories unrelated packages, edits unrelated
 `/etc`, performs generic orphan cleanup, or removes packages it did not record
 as introduced by a desktop profile.
 
+The niri profile currently uses `xwayland-satellite-git` because stable 0.8.2
+breaks Steam dropdown and context-menu focus. Return to the repository package
+after Arch ships xwayland-satellite 0.8.3 or newer.
+
 Preview:
 
 ```sh

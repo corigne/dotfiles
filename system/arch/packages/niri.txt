@@ -2,7 +2,6 @@ niri
 noctalia
 greetd
 accountsservice
-xwayland-satellite
 xdg-desktop-portal
 xdg-desktop-portal-gnome
 xdg-desktop-portal-gtk
