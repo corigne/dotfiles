@@ -37,6 +37,20 @@ interval_seconds = 300
 order = "random"
 recursive = true
 
+[plugins]
+enabled = ["nexus/mpvpaper"]
+
+[[plugins.source]]
+name = "dotfiles"
+kind = "path"
+location = "/home/nexus/.dotfiles/packages/noctalia/plugins"
+enabled = true
+
+[plugin_settings."nexus/mpvpaper"]
+video_directory = "/home/nexus/Pictures/animated_slideshow"
+auto_pause = "off"
+extract_last_frame = false
+
 [theme]
 mode = "dark"
 source = "builtin"
