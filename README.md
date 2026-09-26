@@ -101,9 +101,10 @@ them only inside its own session.
 Noctalia rotates `~/.config/noctalia/local.toml`'s wallpaper directory
 automatically. Use `Mod+Ctrl+Escape` for the main collection,
 `Mod+Shift+Escape` for the SFW collection, and `Mod+Alt+Escape` for the animated
-collection. `Mod+Ctrl+Period` advances immediately in both desktop profiles.
-Canonical niri keeps `Mod+Escape` for shortcut-inhibit toggling. The default
-automation interval is five minutes.
+collection. `Mod+Escape` advances immediately. Niri's shortcut-inhibit toggle
+moves to `Mod+Ctrl+Alt+Escape`. Animated selections use the repository-owned
+Noctalia `mpvpaper` plugin to keep distinct per-output animation visible through
+background effects.
 
 `wluma` is not started by either desktop profile. Webcam ALS caused distracting
 camera activity, Noctalia displayed an OSD for every automatic brightness
@@ -236,7 +237,8 @@ added only where upstream has no equivalent:
 | `Mod+Ctrl+Escape` | Random main wallpaper |
 | `Mod+Shift+Escape` | Random SFW wallpaper |
 | `Mod+Alt+Escape` | Random animated wallpaper |
-| `Mod+Ctrl+Period` | Next wallpaper |
+| `Mod+Escape` | Next wallpaper |
+| `Mod+Ctrl+Alt+Escape` | Toggle shortcut inhibitor |
 
 Navigation, movement, workspaces, overview, consume/expel, sizing, floating,
 tabbed columns, screenshots, and session exit retain niri's upstream bindings.
