@@ -386,7 +386,7 @@ binds {
     Mod+Ctrl+Escape hotkey-overlay-title="Random Home Wallpaper" { spawn "noctalia" "msg" "wallpaper-random"; }
     Mod+Shift+Escape hotkey-overlay-title="Random SFW Wallpaper" { spawn "noctalia-wallpaper-random" "/home/nexus/Pictures/sfw"; }
     Mod+Alt+Escape hotkey-overlay-title="Random Animated Wallpaper" { spawn "noctalia-wallpaper-random" "/home/nexus/Pictures/animated_slideshow"; }
-    Mod+Ctrl+Period hotkey-overlay-title="Next Wallpaper" { spawn "noctalia" "msg" "wallpaper-next"; }
+    Mod+Escape hotkey-overlay-title="Next Wallpaper" { spawn "noctalia" "msg" "wallpaper-next"; }
 
     Mod+F2 hotkey-overlay-title="Previous Media Track" { spawn "playerctl" "--player=spotify,vlc,audacious" "previous"; }
     Mod+F3 hotkey-overlay-title="Next Media Track" { spawn "playerctl" "--player=spotify,vlc,audacious" "next"; }
@@ -645,7 +645,7 @@ binds {
     //
     // The allow-inhibiting=false property can be applied to other binds as well,
     // which ensures niri always processes them, even when an inhibitor is active.
-    Mod+Escape allow-inhibiting=false { toggle-keyboard-shortcuts-inhibit; }
+    Mod+Ctrl+Alt+Escape allow-inhibiting=false { toggle-keyboard-shortcuts-inhibit; }
 
     // The quit action will show a confirmation dialog to avoid accidental exits.
     Mod+Shift+E { quit; }
