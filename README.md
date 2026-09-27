@@ -244,10 +244,12 @@ added only where upstream has no equivalent:
 | `Mod+Escape` | Next wallpaper |
 | `Mod+Ctrl+Alt+Escape` | Toggle shortcut inhibitor |
 
-Navigation, movement, workspaces, overview, consume/expel, sizing, floating,
-tabbed columns, screenshots, and session exit retain niri's upstream bindings.
-The old i3 and current Hypr configs are references for missing actions, not
-templates for forcing niri into an i3 layout.
+Navigation follows one modifier grammar: plain `Mod` focuses within a
+workspace, `Mod+Shift` moves within it, `Mod+Ctrl` focuses workspaces,
+`Mod+Ctrl+Shift` moves columns between workspaces, `Mod+Alt` focuses monitors,
+and `Mod+Alt+Shift` moves columns between monitors. Output-name bindings remain
+host-local. The old i3 and current Hypr configs are references for missing
+actions, not templates for forcing niri into an i3 layout.
 
 ### First-login cheatsheet
 
@@ -266,9 +268,14 @@ Useful canonical starting points:
 | `Mod+Shift+Slash` | Open hotkey cheatsheet |
 | `Mod+O` | Toggle overview |
 | `Mod+Q` | Close focused window |
-| `Mod+H/J/K/L` or arrows | Move focus |
-| `Mod+Ctrl+H/J/K/L` or arrows | Move column/window |
-| `Mod+PageUp/PageDown` | Change workspace |
+| `Mod` + H/J/K/L, arrows, or wheel | Focus within workspace |
+| `Mod+Shift` + H/J/K/L, arrows, or wheel | Move within workspace |
+| `Mod+Ctrl` + J/K, Up/Down, PageUp/PageDown, U/I, or wheel | Focus workspace |
+| `Mod+Ctrl+Shift` + workspace control | Move column between workspaces |
+| `Mod+Alt` + H/J/K/L, arrows, or wheel | Focus monitor |
+| `Mod+Alt+Shift` + monitor control | Move column between monitors |
+| `Mod+1..9` | Focus numbered workspace on focused monitor |
+| `Mod+Ctrl+Shift+1..9` | Move column to numbered workspace |
 | `Mod+R` | Cycle preset column widths |
 | `Mod+F` | Maximize column |
 | `Mod+Shift+F` | Fullscreen window |
