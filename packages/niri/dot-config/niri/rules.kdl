@@ -24,7 +24,7 @@ window-rule {
     match app-id=r#"^(virt-manager|qemu|remote-viewer|qv4l2|gimp|swayimg)$"#
     match app-id=r#"^(obsidian|firefox|org\.vinegarhq\.Sober|robloxstudiobeta\.exe)$"#
     match app-id=r#"^(org\.remmina\.Remmina|mpv|vlc|krita|steam_app_881100)$"#
-    match app-id=r#"^(rsi launcher\.exe|org\.jellyfin\.JellyfinDesktop)$"#
+    match app-id=r#"^(com-ca-directory-jxplorer-JXplorer|rsi launcher\.exe|org\.jellyfin\.JellyfinDesktop)$"#
     match app-id=r#"^(org\.darktable\.darktable|scrcpy|zoom)$"#
     opacity 1.0
 }
@@ -38,6 +38,15 @@ window-rule {
 window-rule {
     match title=r#"^(Battle\.net|Black & White|Diablo II: Resurrected|DualCPY Container)$"#
     match title="^Discord Popout$"
+    opacity 1.0
+}
+
+// Vesktop popouts start as "Discord Popout", then adopt the call or stream
+// title. Niri has no initial-title matcher, so retain full opacity for Vesktop
+// auxiliary windows while excluding the main "Discord | ..." window.
+window-rule {
+    match app-id=r#"^vesktop$"#
+    exclude title=r#"Discord \|"#
     opacity 1.0
 }
 
