@@ -96,7 +96,8 @@ Other commands:
 Profile switching removes links from the previously recorded profile, links the
 new profile, and keeps shared files through `common`. It also disables and
 stops globally enabled Hypr-only user services when selecting niri. Hypr starts
-them only inside its own session.
+them only inside its own session. The niri session initializes GTK interface
+and monospace defaults to `Maple Mono NF CN`; Noctalia uses the same family.
 
 Noctalia rotates `~/.config/noctalia/local.toml`'s wallpaper directory
 automatically. Use `Mod+Ctrl+Escape` for the main collection,
