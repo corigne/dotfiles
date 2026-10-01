@@ -30,6 +30,7 @@ fill_mode = "crop"
 transition = ["fade", "wipe", "zoom"]
 transition_duration = 900
 directory = ""
+per_monitor_directories = true
 
 [wallpaper.automation]
 enabled = false

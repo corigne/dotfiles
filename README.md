@@ -99,13 +99,15 @@ stops globally enabled Hypr-only user services when selecting niri. Hypr starts
 them only inside its own session. The niri session initializes GTK interface
 and monospace defaults to `Maple Mono NF CN`; Noctalia uses the same family.
 
-Noctalia rotates `~/.config/noctalia/local.toml`'s wallpaper directory
-automatically. Use `Mod+Ctrl+Escape` for the main collection,
+Wallpaper collection state lives under
+`$XDG_STATE_HOME/wallpaper-collection/state.json`, independent of either
+compositor. Use `Mod+Ctrl+Escape` for the main collection,
 `Mod+Shift+Escape` for the SFW collection, and `Mod+Alt+Escape` for the animated
-collection. `Mod+Escape` advances immediately. Niri's shortcut-inhibit toggle
-moves to `Mod+Ctrl+Alt+Escape`. Animated selections use the repository-owned
-Noctalia `mpvpaper` plugin to keep distinct per-output animation visible through
-background effects.
+collection. `Mod+Escape` advances within the selected collection through
+Noctalia on niri or the existing `awww` slideshow on Hyprland. Niri's
+shortcut-inhibit toggle moves to `Mod+Ctrl+Alt+Escape`. Animated selections use
+the repository-owned Noctalia `mpvpaper` plugin to keep distinct per-output
+animation visible through background effects.
 
 `wluma` is not started by either desktop profile. Webcam ALS caused distracting
 camera activity, Noctalia displayed an OSD for every automatic brightness

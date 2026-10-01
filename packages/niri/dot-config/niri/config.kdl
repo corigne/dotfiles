@@ -385,10 +385,10 @@ binds {
     Mod+Shift+N hotkey-overlay-title="Open Thunar" { spawn "thunar"; }
     Mod+Shift+D hotkey-overlay-title="Open Noctalia Control Center" { spawn "noctalia" "msg" "panel-toggle" "control-center"; }
     Mod+Alt+V hotkey-overlay-title="Open Clipboard History" { spawn "noctalia" "msg" "panel-toggle" "clipboard"; }
-    Mod+Ctrl+Escape hotkey-overlay-title="Random Home Wallpaper" { spawn "noctalia" "msg" "wallpaper-random"; }
+    Mod+Ctrl+Escape hotkey-overlay-title="Random Home Wallpaper" { spawn "noctalia-wallpaper-random" "/home/nexus/Pictures/slideshow"; }
     Mod+Shift+Escape hotkey-overlay-title="Random SFW Wallpaper" { spawn "noctalia-wallpaper-random" "/home/nexus/Pictures/sfw"; }
     Mod+Alt+Escape hotkey-overlay-title="Random Animated Wallpaper" { spawn "noctalia-wallpaper-random" "/home/nexus/Pictures/animated_slideshow"; }
-    Mod+Escape hotkey-overlay-title="Next Wallpaper" { spawn "noctalia" "msg" "wallpaper-next"; }
+    Mod+Escape hotkey-overlay-title="Next Wallpaper" { spawn "wallpaper-next"; }
 
     Mod+F2 hotkey-overlay-title="Previous Media Track" { spawn "playerctl" "--player=spotify,vlc,audacious" "previous"; }
     Mod+F3 hotkey-overlay-title="Next Media Track" { spawn "playerctl" "--player=spotify,vlc,audacious" "next"; }
