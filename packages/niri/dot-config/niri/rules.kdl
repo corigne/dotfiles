@@ -11,6 +11,10 @@ window-rule {
 window-rule {
     match is-focused=false
     opacity 0.725
+
+    background-effect {
+        blur-opacity 0.7
+    }
 }
 
 window-rule {

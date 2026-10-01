@@ -278,6 +278,8 @@ spawn-at-startup "awww-slideshow-control" "stop"
 spawn-at-startup "gsettings" "set" "org.gnome.desktop.interface" "font-name" "Maple Mono NF CN 10"
 spawn-at-startup "gsettings" "set" "org.gnome.desktop.interface" "monospace-font-name" "Maple Mono NF CN 10"
 spawn-at-startup "systemctl" "--user" "restart" "noctalia.service"
+spawn-at-startup "easyeffects" "--gapplication-service"
+spawn-at-startup "udiskie" "--tray"
 
 // To run a shell command (with variables, pipes, etc.), use spawn-sh-at-startup:
 // spawn-sh-at-startup "qs -c ~/source/qs/MyAwesomeShell"
@@ -295,7 +297,7 @@ hotkey-overlay {
 prefer-no-csd
 
 blur {
-    offset 0.75
+    offset 1
 }
 
 // You can change the path where screenshots are saved.
