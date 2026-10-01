@@ -235,7 +235,7 @@ added only where upstream has no equivalent:
 |---|---|
 | `Mod+T` | Ghostty |
 | `Mod+D` | Noctalia launcher |
-| `Super+Alt+L` | Noctalia lock |
+| `Mod+Ctrl+L` | Noctalia lock |
 | `Mod+N` | Yazi |
 | `Mod+Shift+N` | Thunar |
 | `Mod+Shift+D` | Noctalia control center |

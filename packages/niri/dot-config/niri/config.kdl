@@ -382,7 +382,7 @@ binds {
     // Suggested binds for running programs: terminal, app launcher, screen locker.
     Mod+T hotkey-overlay-title="Open a Terminal: Ghostty" { spawn "ghostty"; }
     Mod+D hotkey-overlay-title="Open Noctalia Launcher" { spawn "noctalia" "msg" "panel-toggle" "launcher"; }
-    Super+Alt+L hotkey-overlay-title="Lock the Session" { spawn "noctalia" "msg" "session" "lock"; }
+    Mod+Ctrl+L hotkey-overlay-title="Lock the Session" { spawn "noctalia" "msg" "session" "lock"; }
     Mod+N hotkey-overlay-title="Open Yazi" { spawn "ghostty" "-e" "yazi"; }
     Mod+Shift+N hotkey-overlay-title="Open Thunar" { spawn "thunar"; }
     Mod+Shift+D hotkey-overlay-title="Open Noctalia Control Center" { spawn "noctalia" "msg" "panel-toggle" "control-center"; }
