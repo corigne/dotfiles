@@ -277,6 +277,8 @@ Useful canonical starting points:
 | `Mod+Ctrl+Shift` + workspace control | Move column between workspaces |
 | `Mod+Alt` + H/J/K/L, arrows, or wheel | Focus monitor |
 | `Mod+Alt+Shift` + monitor control | Move column between monitors |
+| `Mod+Alt+PageUp/PageDown` | Focus previous/next monitor |
+| `Mod+Alt+Shift+PageUp/PageDown` | Move column to previous/next monitor |
 | `Mod+1..9` | Focus numbered workspace on focused monitor |
 | `Mod+Ctrl+Shift+1..9` | Move column to numbered workspace |
 | `Mod+R` | Cycle preset column widths |
