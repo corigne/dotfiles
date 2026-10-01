@@ -272,8 +272,10 @@ Useful canonical starting points:
 | `Mod+Shift+Slash` | Open hotkey cheatsheet |
 | `Mod+O` | Toggle overview |
 | `Mod+Q` | Close focused window |
-| `Mod` + H/J/K/L, arrows, or wheel | Focus within workspace |
-| `Mod+Shift` + H/J/K/L, arrows, or wheel | Move within workspace |
+| `Mod` + H/J/K/L | Focus within workspace, crossing monitors at an edge |
+| `Mod+Shift` + H/L | Move column within workspace, crossing monitors at an edge |
+| `Mod` + arrows or wheel | Focus strictly within workspace |
+| `Mod+Shift` + arrows or wheel | Move strictly within workspace |
 | `Mod+Ctrl` + J/K, Up/Down, PageUp/PageDown, U/I, or wheel | Focus workspace |
 | `Mod+Ctrl+Shift` + workspace control | Move column between workspaces |
 | `Mod+Alt` + H/J/K/L, arrows, or wheel | Focus monitor |
