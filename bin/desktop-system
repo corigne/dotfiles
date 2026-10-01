@@ -60,6 +60,7 @@ print_plan() {
     if [ "$profile" = "niri" ]; then
         printf '%s\n' "Root files to compare/install:"
         printf '%s\n' "  /etc/greetd/config.toml"
+        printf '%s\n' "  /etc/pam.d/greetd"
         printf '%s\n' "  /etc/xdg-desktop-portal/niri-portals.conf"
         printf '%s\n' "  /var/lib/noctalia-greeter/greeter.toml"
         printf '%s\n' "  /usr/share/wayland-sessions/niri.desktop"
@@ -168,6 +169,9 @@ apply_niri_system() {
         "$repo_dir/system/arch/greetd/config.toml" \
         /etc/greetd/config.toml 0644 root root
     install_root_file \
+        "$repo_dir/system/arch/pam/greetd" \
+        /etc/pam.d/greetd 0644 root root
+    install_root_file \
         "$repo_dir/system/arch/xdg-desktop-portal/niri-portals.conf" \
         /etc/xdg-desktop-portal/niri-portals.conf 0644 root root
     if getent passwd greetduser >/dev/null; then
@@ -218,6 +222,7 @@ verify_root_file() {
 verify_niri_system() {
     validate_niri_system
     verify_root_file "$repo_dir/system/arch/greetd/config.toml" /etc/greetd/config.toml 644 root root
+    verify_root_file "$repo_dir/system/arch/pam/greetd" /etc/pam.d/greetd 644 root root
     verify_root_file "$repo_dir/system/arch/xdg-desktop-portal/niri-portals.conf" /etc/xdg-desktop-portal/niri-portals.conf 644 root root
     if getent passwd greetduser >/dev/null; then
         [ "$(getent passwd greetduser | cut -d: -f7)" = "/usr/bin/nologin" ] || {

@@ -173,6 +173,7 @@ ownership. Arbitrary files and external symlinks remain untouched.
 
 - install pacman/AUR packages;
 - manage `/etc/greetd/config.toml`;
+- manage `/etc/pam.d/greetd` so the login password unlocks GNOME Keyring;
 - manage desktop portal policy under `/etc`;
 - install Noctalia Greeter state owned by its system account;
 - enable a system display-manager service.
@@ -388,6 +389,10 @@ journalctl -u greetd.service -b
 Noctalia Greeter appearance sync remains authenticated by default. Do not add a
 passwordless Polkit rule until installed shell and greeter versions support the
 constrained sync action documented upstream.
+
+The managed greetd PAM stack passes the login password to GNOME Keyring and
+starts its Secret Service during session setup. Automatic unlock requires the
+login keyring password to match the account password.
 
 The Arch adapter also changes the unused legacy `greetduser` account to
 `/usr/bin/nologin` when that account exists. Noctalia Greeter enumerates NSS
