@@ -45,12 +45,12 @@ window-rule {
     opacity 1.0
 }
 
-// Vesktop popouts start as "Discord Popout", then adopt the call or stream
-// title. Niri has no initial-title matcher, so retain full opacity for Vesktop
-// auxiliary windows while excluding the main "Discord | ..." window.
+// Discord popouts start as "Discord Popout", then adopt the call or stream
+// title. Niri has no initial-title matcher, so retain full opacity for Discord
+// auxiliary windows while excluding normal Discord-branded main windows.
 window-rule {
-    match app-id=r#"^vesktop$"#
-    exclude title=r#"Discord \|"#
+    match app-id=r#"^(discord|vesktop)$"#
+    exclude title=r#"^(?:(?:\(\d+\) )?Discord(?: \|.*)?|.* - Discord)$"#
     opacity 1.0
 }
 
