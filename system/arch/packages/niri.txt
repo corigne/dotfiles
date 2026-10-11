@@ -12,6 +12,9 @@ yazi
 brightnessctl
 playerctl
 wireplumber
+easyeffects
+udiskie
+tpm-keyring-unlock
 grim
 slurp
 wl-clipboard
