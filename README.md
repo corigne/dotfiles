@@ -129,6 +129,12 @@ shortcut-inhibit toggle moves to `Mod+Ctrl+Alt+Escape`. Animated selections use
 the repository-owned Noctalia `mpvpaper` plugin to keep distinct per-output
 animation visible through background effects.
 
+The collection scripts are the only wallpaper queue owner. The tracked
+Noctalia profile disables native fixed-directory automation in
+`zz-wallpaper-collection.toml`; scripts never rewrite shell configuration.
+Niri starts `wallpaper-collection.timer`, which advances the authoritative
+queue every five minutes through the portable `wallpaper-next` dispatcher.
+
 `wluma` is not started by either desktop profile. Webcam ALS caused distracting
 camera activity, Noctalia displayed an OSD for every automatic brightness
 change, and screen capture exposed a Mesa fence failure on the hybrid-GPU

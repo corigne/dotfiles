@@ -2,4 +2,4 @@
 directory = "/home/USER/Pictures/slideshow"
 
 [wallpaper.automation]
-enabled = true
+enabled = false

@@ -1,0 +1,11 @@
+[Unit]
+Description=Advance active wallpaper collection
+PartOf=graphical-session.target
+After=graphical-session.target noctalia.service
+ConditionEnvironment=XDG_CURRENT_DESKTOP=niri
+ConditionEnvironment=NIRI_SOCKET
+
+[Service]
+Type=oneshot
+Environment=PATH=%h/.local/bin:/usr/local/bin:/usr/bin
+ExecStart=%h/.local/bin/wallpaper-next

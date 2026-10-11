@@ -1,0 +1,3 @@
+# Collection rotation is owned by wallpaper-collection.timer.
+[wallpaper.automation]
+enabled = false

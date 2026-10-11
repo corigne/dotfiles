@@ -87,6 +87,13 @@ Do not add laptop backlight configuration. Confirm that unavailable brightness
 and battery widgets hide themselves; override the desktop bar locally only if
 Noctalia renders empty controls.
 
+Keep `[wallpaper.automation] enabled = false`. The tracked
+`zz-wallpaper-collection.toml` enforces that setting after host-local config,
+and Niri starts `wallpaper-collection.timer` to call the portable
+`wallpaper-next` dispatcher every five minutes. This keeps both DP-1 and DP-2
+inside the selected collection instead of letting Noctalia's fixed-directory
+timer overwrite either output.
+
 Do not install or start `wluma` initially. This host has no backlight device,
 and screen-content capture previously exposed Mesa fence failures on the
 laptop.
