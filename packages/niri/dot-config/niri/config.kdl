@@ -345,6 +345,12 @@ window-rule {
     open-floating true
 }
 
+// Keep the Delfin Jellyfin client fully opaque.
+window-rule {
+    match app-id=r#"^cafe\.avery\.Delfin$"#
+    opacity 1.0
+}
+
 // Example: block out two password managers from screen capture.
 // (This example rule is commented out with a "/-" in front.)
 /-window-rule {
