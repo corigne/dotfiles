@@ -40,9 +40,10 @@ The existing repositories predate the profile layout and are dirty:
 
 The generated Copilot completion should be archived, not manually ported.
 Current Scripts and dotfiles `main` already contain the durable slideshow and
-profile work. Preserve Ishimura's immediate lock and EasyEffects startup in its
-ignored Hypr `local.lua`. Compare the native Hyprexpo load against current
-shared Hypr configuration before carrying it forward.
+profile work. Preserve Ishimura's immediate lock in its ignored Hypr
+`local.lua`; EasyEffects startup is shared by both desktop profiles. Compare the
+native Hyprexpo load against current shared Hypr configuration before carrying
+it forward.
 
 Before changing links or repositories:
 

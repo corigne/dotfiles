@@ -1,12 +1,19 @@
 # Copilot Instructions
 
 ## Environment
-- OS: Linux (Wayland/Hyprland)
+- OS: Linux (Wayland/Niri primary, Hyprland fallback)
 - Shell: fish (primary), bash fallback
 - Editor: Neovim
 - Multiplexer: tmux / zellij
 - Package managers: apt, cargo, pip, npm (via fnm), go install
 - Secrets: pass + GPG — never store secrets in plaintext
+
+## System architecture
+- Read `~/Documents/vault/notes/systems/Dotfiles - Niri + Noctalia Architecture.md`
+  before changing desktop profiles, package manifests, greetd/PAM, Noctalia,
+  wallpaper scripts, host-local overrides, or the private Niri build.
+- Treat `~/.dotfiles/README.md` as operational setup documentation and the
+  architecture note as the cross-repository ownership and handoff reference.
 
 ## Languages & style
 - Go: stdlib-first, explicit errors, no magic

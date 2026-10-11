@@ -2,14 +2,14 @@
 
 Wayland-first dotfiles with explicit desktop profiles:
 
-- `niri`: niri + Noctalia + Noctalia Greeter
+- `niri`: primary desktop, niri + Noctalia + Noctalia Greeter
 - `hypr`: retained Hyprland setup
 - `trial`: both desktop configs, with session-owned services kept isolated
 - `common`: shell, terminals, editors, and shared tools
 
 GNU Stow owns user configuration. A small POSIX shell adapter owns only
-desktop packages and unavoidable root integration such as greetd and portal
-policy. It does not manage or converge the whole Arch system.
+desktop packages and unavoidable root integration such as greetd, PAM, and
+portal policy. It does not manage or converge the whole Arch system.
 
 ## Layout
 
@@ -24,6 +24,26 @@ system/arch/           Arch package manifests and owned root templates
 bin/                   profile and desktop-system commands
 docs/                  migration, governance, and troubleshooting notes
 ```
+
+## Architecture handoff
+
+Cross-repository ownership, live runtime wiring, host-local boundaries, the
+private Niri build, update workflow, validation, and recovery are documented in
+the Obsidian vault:
+
+```text
+~/Documents/vault/notes/systems/Dotfiles - Niri + Noctalia Architecture.md
+```
+
+Repository topology:
+
+| Path | Repository | Role |
+|---|---|---|
+| `~/.dotfiles` | `git@github.com:corigne/dotfiles.git` | Profiles, manifests, root templates, docs |
+| `~/.dotfiles/modules/scripts` | `git@github.com:corigne/scripts.git` | Shared desktop commands linked into `~/.local/bin` |
+| `~/.dotfiles/packages/common/dot-config/nvim` | `git@github.com:corigne/dot-neovim.git` | Neovim configuration |
+| `~/.dotfiles/packages/common/dot-config/tmux` | `git@github.com:corigne/dot-tmux.git` | tmux configuration |
+| `~/Projects/niri` | `https://github.com/corigne/niri-private.git` | Private `blur-opacity` Niri branch |
 
 ## Clone
 
@@ -123,6 +143,11 @@ therefore does not start in Hyprland. Remove the service and restore direct
 Niri startup after the upstream fix is installed and a suspend/resume test
 passes.
 
+Both desktop profiles install and start EasyEffects and `udiskie --tray` once
+per session. In Niri, Noctalia replaces the Hypr idle, polkit, notification,
+clipboard, bar, and wallpaper processes. Hardware-specific overlays such as
+BongoCat belong in ignored host-local configuration.
+
 ## Multi-host rollout
 
 Trial niri + Noctalia on the current host first. `ishimura` is the next Arch
@@ -173,7 +198,7 @@ ownership. Arbitrary files and external symlinks remain untouched.
 
 - install pacman/AUR packages;
 - manage `/etc/greetd/config.toml`;
-- manage `/etc/pam.d/greetd` so the login password unlocks GNOME Keyring;
+- manage `/etc/pam.d/greetd` so TPM/password login unlocks GNOME Keyring;
 - manage desktop portal policy under `/etc`;
 - install Noctalia Greeter state owned by its system account;
 - enable a system display-manager service.
@@ -392,9 +417,10 @@ Noctalia Greeter appearance sync remains authenticated by default. Do not add a
 passwordless Polkit rule until installed shell and greeter versions support the
 constrained sync action documented upstream.
 
-The managed greetd PAM stack passes the login password to GNOME Keyring and
-starts its Secret Service during session setup. Automatic unlock requires the
-login keyring password to match the account password.
+The managed greetd PAM stack first offers the TPM-backed keyring token, then
+passes the login password to GNOME Keyring and starts its Secret Service during
+session setup. Password fallback requires the login keyring password to match
+the account password.
 
 The Arch adapter also changes the unused legacy `greetduser` account to
 `/usr/bin/nologin` when that account exists. Noctalia Greeter enumerates NSS
