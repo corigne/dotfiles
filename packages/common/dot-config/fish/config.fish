@@ -1,4 +1,18 @@
 if status is-interactive
+    # Hydro prompt preferences (versioned here instead of universal vars)
+    set -g hydro_color_start cyan
+    set -g hydro_color_prompt blue
+    set -g hydro_color_git green
+    set -g hydro_color_duration yellow
+    set -g hydro_color_pwd magenta
+    set -g hydro_multiline true
+    set -g hydro_fetch true
+    set -g fish_prompt_pwd_dir_length 5
+
+    set -g prompt_username_color blue
+    set -g prompt_hostname_color green
+    set -g prompt_hostuser_separator_color magenta
+
     set -x GPG_TTY (tty)
     fish_add_path --prepend ~/.local/bin
     if test -f ~/.config/shell/dev.env
