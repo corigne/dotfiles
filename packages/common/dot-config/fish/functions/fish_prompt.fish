@@ -12,5 +12,5 @@ function prompt_hook
     set --query prompt_hostname_color || set -g prompt_hostname_color green
     set --query prompt_hostuser_separator_color || set -g prompt_hostuser_separator_color magenta
 
-    echo -e -n (set_color $prompt_username_color)"$prompt_username"(set_color $prompt_hostuser_separator_color)"$prompt_hostuser_separator"(set_color $prompt_hostname_color)"$prompt_hostname"(set_color normal)" "
+    echo -e -n (set_color $prompt_username_color)"$prompt_username"(set_color $prompt_hostuser_separator_color)"$prompt_hostuser_separator"(set_color $prompt_hostname_color)"$prompt_hostname"(set_color $hydro_color_normal)" "
 end
