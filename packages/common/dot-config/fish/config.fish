@@ -11,6 +11,7 @@ if status is-interactive
         bass source ~/.rokit/env
     end
     bind ctrl-d ''
+
     # Commands to run in interactive sessions can go here
     function bind_bang
         switch (commandline -t)[-1]
