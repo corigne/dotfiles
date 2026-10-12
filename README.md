@@ -3,7 +3,7 @@
 Wayland-first dotfiles with explicit desktop profiles:
 
 - `niri`: primary desktop, niri + Noctalia + Noctalia Greeter
-- `hypr`: retained Hyprland setup
+- `hypr`: old Hyprland setup, archival purposes only
 - `trial`: both desktop configs, with session-owned services kept isolated
 - `common`: shell, terminals, editors, and shared tools
 
