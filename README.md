@@ -207,7 +207,12 @@ ownership. Arbitrary files and external symlinks remain untouched.
 - manage `/etc/pam.d/greetd` so TPM/password login unlocks GNOME Keyring;
 - manage desktop portal policy under `/etc`;
 - install Noctalia Greeter state owned by its system account;
-- enable a system display-manager service.
+- enable a system display-manager service;
+- manage `/etc/NetworkManager/dispatcher.d/09-timezone`, which runs `tzupdate`
+  on network `up` so the system timezone follows IP geolocation after travel.
+
+The timezone dispatcher is common root integration applied for every profile
+(`niri` and `hypr`), not a niri-only root template.
 
 Its scope stops there. It never inventories unrelated packages, edits unrelated
 `/etc`, performs generic orphan cleanup, or removes packages it did not record

@@ -57,8 +57,10 @@ print_plan() {
     printf '%s\n' "AUR packages to install:"
     missing_packages "$aur_manifest"
 
+    printf '%s\n' "Root files to compare/install:"
+    printf '%s\n' "  /etc/NetworkManager/dispatcher.d/09-timezone"
+
     if [ "$profile" = "niri" ]; then
-        printf '%s\n' "Root files to compare/install:"
         printf '%s\n' "  /etc/greetd/config.toml"
         printf '%s\n' "  /etc/pam.d/greetd"
         printf '%s\n' "  /etc/xdg-desktop-portal/niri-portals.conf"
@@ -70,6 +72,17 @@ print_plan() {
         printf '%s\n' "  /etc/pacman.d/hooks/90-hide-hyprland-uwsm.hook"
         printf '%s\n' "Service to enable after validation: greetd.service"
     fi
+}
+
+apply_common_system() {
+    require_command tzupdate
+    install_root_file \
+        "$repo_dir/system/arch/networkmanager/dispatcher.d/09-timezone" \
+        /etc/NetworkManager/dispatcher.d/09-timezone 0755 root root
+}
+
+verify_common_system() {
+    verify_root_file "$repo_dir/system/arch/networkmanager/dispatcher.d/09-timezone" /etc/NetworkManager/dispatcher.d/09-timezone 755 root root
 }
 
 install_manifest() {
@@ -324,6 +337,7 @@ case "$action" in
     check)
         require_command pacman
         require_command stow
+        require_command tzupdate
         [ -f "$native_manifest" ]
         [ -f "$aur_manifest" ]
         ;;
@@ -338,11 +352,13 @@ case "$action" in
             require_command paru
             install_manifest "$aur_manifest" "paru -S --needed --noconfirm"
         fi
+        apply_common_system
         if [ "$profile" = "niri" ]; then
             apply_niri_system
         fi
         ;;
     verify)
+        verify_common_system
         if [ "$profile" = "niri" ]; then
             verify_niri_system
         fi
