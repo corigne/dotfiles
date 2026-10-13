@@ -10,9 +10,9 @@ plan_verbose=0
 usage() {
     cat <<'EOF'
 Usage:
-  dotfiles-profile plan <niri|hypr|trial> [--verbose]
-  dotfiles-profile apply <niri|hypr|trial>
-  dotfiles-profile unstow [niri|hypr|trial]
+  dotfiles-profile plan niri [--verbose]
+  dotfiles-profile apply niri
+  dotfiles-profile unstow [niri]
   dotfiles-profile status
   dotfiles-profile audit niri
   dotfiles-profile migrate-legacy <plan|apply>
@@ -20,26 +20,8 @@ EOF
 }
 
 packages_for() {
-    case "$1" in
-        niri) printf '%s\n' "common niri noctalia" ;;
-        hypr) printf '%s\n' "common hypr" ;;
-        trial) printf '%s\n' "common niri noctalia hypr" ;;
-        *) return 1 ;;
-    esac
-}
-
-packages_to_remove() {
-    old_packages=$1
-    new_packages=$2
-    remove=
-
-    for package in $old_packages; do
-        case " $new_packages " in
-            *" $package "*) ;;
-            *) remove="$remove $package" ;;
-        esac
-    done
-    printf '%s\n' "${remove# }"
+    [ "$1" = niri ] || return 1
+    printf '%s\n' "common niri noctalia"
 }
 
 require_command() {
@@ -152,26 +134,33 @@ run_stow() {
 
 run_scripts_stow() {
     mode=$1
-    target="$HOME/.local/bin"
-    mkdir -p "$target"
+    bin_target="$HOME/.local/bin"
+    libexec_target="$HOME/.local/libexec/dotfiles"
+    mkdir -p "$bin_target" "$libexec_target"
     case "$mode" in
         plan-stow)
             run_stow_preview "Link scripts: modules/scripts/bin" \
                 stow --simulate --stow --verbose=1 \
-                --dir "$repo_dir/modules/scripts" --target "$target" bin
+                --dir "$repo_dir/modules/scripts" --target "$bin_target" bin
+            run_stow_preview "Link backends: modules/scripts/libexec" \
+                stow --simulate --stow --verbose=1 \
+                --dir "$repo_dir/modules/scripts" --target "$libexec_target" libexec
             ;;
         delete)
-            stow --delete --verbose=1 --dir "$repo_dir/modules/scripts" --target "$target" bin
+            stow --delete --verbose=1 --dir "$repo_dir/modules/scripts" --target "$bin_target" bin
+            stow --delete --verbose=1 --dir "$repo_dir/modules/scripts" --target "$libexec_target" libexec
             ;;
         stow)
-            stow --stow --verbose=1 --dir "$repo_dir/modules/scripts" --target "$target" bin
+            stow --stow --verbose=1 --dir "$repo_dir/modules/scripts" --target "$bin_target" bin
+            stow --stow --verbose=1 --dir "$repo_dir/modules/scripts" --target "$libexec_target" libexec
             ;;
     esac
 }
 
 require_scripts_submodule() {
-    [ -d "$repo_dir/modules/scripts/bin" ] || {
-        printf '%s\n' "Scripts submodule is missing bin/." >&2
+    [ -d "$repo_dir/modules/scripts/bin" ] &&
+        [ -d "$repo_dir/modules/scripts/libexec" ] || {
+        printf '%s\n' "Scripts submodule is missing bin/ or libexec/." >&2
         printf '%s\n' "Run: git submodule update --init --recursive" >&2
         return 1
     }
@@ -222,8 +211,7 @@ legacy_links() {
 legacy_real_overrides() {
     for path in \
         "$HOME/.config/shell/dev.env" \
-        "$HOME/.copilot/settings.json" \
-        "$HOME/.config/systemd/user/waybar-battery-watcher.service"
+        "$HOME/.copilot/settings.json"
     do
         [ -e "$path" ] && [ ! -L "$path" ] && printf '%s\n' "$path"
     done
@@ -271,10 +259,6 @@ plan_profile() {
     printf '  requested: %s\n' "$profile"
     printf '  packages:  %s\n' "$selected"
 
-    if [ -n "$current" ] && [ "$current" != "$profile" ]; then
-        remove=$(packages_to_remove "$(packages_for "$current")" "$selected")
-        [ -n "$remove" ] && run_stow plan-delete "$remove"
-    fi
     run_stow plan-stow "$selected"
     run_scripts_stow plan-stow
     printf '\n%s\n' "Ready: ./bin/dotfiles-profile apply $profile"
@@ -283,35 +267,17 @@ plan_profile() {
 apply_profile() {
     profile=$1
     selected=$(packages_for "$profile")
-    current=$(current_profile)
 
     require_scripts_submodule
     run_stow plan-stow "$selected"
     run_scripts_stow plan-stow
 
-    if [ -n "$current" ] && [ "$current" != "$profile" ]; then
-        remove=$(packages_to_remove "$(packages_for "$current")" "$selected")
-        [ -n "$remove" ] && run_stow delete "$remove"
-    fi
     run_stow stow "$selected"
     run_scripts_stow stow
 
     if [ "${DOTFILES_SKIP_USER_SERVICES:-0}" != "1" ]; then
         systemctl --user daemon-reload >/dev/null 2>&1 || true
-        for wants_link in \
-            "$HOME/.config/systemd/user/default.target.wants/waybar-battery-watcher.service" \
-            "$HOME/.config/systemd/user/graphical-session.target.wants/waybar-battery-watcher.service" \
-            "$HOME/.config/systemd/user/graphical-session.target.wants/wluma.service"
-        do
-            [ -L "$wants_link" ] && rm -f "$wants_link"
-        done
-        if [ "$profile" = "niri" ]; then
-            systemctl --user disable --now hyprpolkitagent.service >/dev/null 2>&1 || true
-            systemctl --user stop waybar-battery-watcher.service >/dev/null 2>&1 || true
-            systemctl --user stop wluma.service >/dev/null 2>&1 || true
-        else
-            systemctl --user disable hyprpolkitagent.service >/dev/null 2>&1 || true
-        fi
+        systemctl --user stop wluma.service >/dev/null 2>&1 || true
     fi
 
     mkdir -p "$state_dir"
@@ -336,50 +302,8 @@ audit_niri() {
     failed=0
 
     profile=$(current_profile)
-    case "$profile" in
-        niri|trial) ;;
-        *)
-            printf 'unexpected recorded profile: %s\n' "$profile" >&2
-            failed=1
-            ;;
-    esac
-
-    if [ "$profile" = "niri" ]; then
-        printf '%s\n' "Checking active links for Hypr profile paths..."
-        for path in \
-            "$HOME/.config/hypr/hyprland.lua" \
-            "$HOME/.config/waybar/config.jsonc" \
-            "$HOME/.config/mako/config" \
-            "$HOME/.config/wlogout/layout"
-        do
-            target=$(readlink -f "$path" 2>/dev/null || true)
-            case "$target" in
-                "$repo_dir/packages/hypr"/*)
-                    printf 'unexpected active link: %s -> %s\n' "$path" "$target" >&2
-                    failed=1
-                    ;;
-            esac
-        done
-    fi
-
-    printf '%s\n' "Checking enabled Hypr user services..."
-    for unit in hyprpolkitagent.service waybar-battery-watcher.service; do
-        if systemctl --user is-enabled "$unit" >/dev/null 2>&1; then
-            printf 'unexpected enabled user service: %s\n' "$unit" >&2
-            failed=1
-        fi
-    done
-
-    printf '%s\n' "Checking running desktop components..."
-    for process in Hyprland hyprlock hypridle hyprpolkitagent waybar mako tofi clipse awww-daemon wlogout; do
-        if pgrep -x "$process" >/dev/null 2>&1; then
-            printf 'unexpected running process: %s\n' "$process" >&2
-            failed=1
-        fi
-    done
-
-    if pgrep -f '/xdg-desktop-portal-hyprland' >/dev/null 2>&1; then
-        printf '%s\n' "unexpected running process: xdg-desktop-portal-hyprland" >&2
+    if [ "$profile" != niri ]; then
+        printf 'unexpected recorded profile: %s\n' "${profile:-none}" >&2
         failed=1
     fi
 
@@ -398,6 +322,7 @@ command=${1:-}
 case "$command" in
     plan)
         [ "$#" -ge 2 ] && [ "$#" -le 3 ] || { usage >&2; exit 2; }
+        [ "$2" = niri ] || { usage >&2; exit 2; }
         if [ "$#" -eq 3 ]; then
             [ "$3" = "--verbose" ] || { usage >&2; exit 2; }
             plan_verbose=1
@@ -405,11 +330,12 @@ case "$command" in
         plan_profile "$2"
         ;;
     apply)
-        [ "$#" -eq 2 ] || { usage >&2; exit 2; }
+        [ "$#" -eq 2 ] && [ "$2" = niri ] || { usage >&2; exit 2; }
         apply_profile "$2"
         ;;
     unstow)
         [ "$#" -le 2 ] || { usage >&2; exit 2; }
+        [ "$#" -eq 1 ] || [ "$2" = niri ] || { usage >&2; exit 2; }
         unstow_profile "${2:-}"
         ;;
     status)

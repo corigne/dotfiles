@@ -1,7 +1,7 @@
 # Copilot Instructions
 
 ## Environment
-- OS: Linux (Wayland/Niri primary, Hyprland fallback)
+- OS: Linux (Wayland/Niri primary, stock Plasma fallback)
 - Shell: fish (primary), bash fallback
 - Editor: Neovim
 - Multiplexer: tmux / zellij

@@ -1,10 +1,9 @@
 # Dotfiles
 
-Wayland-first dotfiles with explicit desktop profiles:
+Wayland-first dotfiles with one managed desktop and one stock recovery desktop:
 
 - `niri`: primary desktop, niri + Noctalia + Noctalia Greeter
-- `hypr`: retired Hyprland setup, retained as source history only
-- `trial`: legacy migration profile, not used on active hosts
+- Plasma: stock recovery session, installed without custom desktop configuration
 - `common`: shell, terminals, editors, and shared tools
 
 GNU Stow owns user configuration. A small POSIX shell adapter owns only
@@ -17,10 +16,9 @@ portal policy. It does not manage or converge the whole Arch system.
 packages/common/       shared home configuration
 packages/niri/         niri configuration
 packages/noctalia/     Noctalia configuration
-packages/hypr/         retired Hyprland, Waybar, mako, and wlogout archive
 archive/i3/            historical i3/polybar reference; never installed
 modules/scripts/       scripts Git submodule; bin/ is linked into ~/.local/bin
-system/arch/           Arch package manifests and owned root templates
+system/arch/           Niri, Plasma fallback, and owned root integration
 bin/                   profile and desktop-system commands
 docs/                  migration, governance, and troubleshooting notes
 ```
@@ -96,15 +94,6 @@ Apply:
 ./bin/dotfiles-profile apply niri
 ```
 
-The retired migration profile remains available for repository archaeology:
-
-```sh
-./bin/dotfiles-profile apply trial
-```
-
-`trial` installs both desktop configs but is no longer used on active hosts.
-Do not install its Hyprland packages or expose a Hyprland greeter session.
-
 Other commands:
 
 ```sh
@@ -112,22 +101,19 @@ Other commands:
 ./bin/dotfiles-profile status
 ./bin/dotfiles-profile audit niri
 ./bin/dotfiles-profile unstow niri
-./bin/dotfiles-profile apply hypr
 ```
 
-Profile switching removes links from the previously recorded profile, links the
-new profile, and keeps shared files through `common`. Selecting niri disables
-and stops globally enabled Hypr-only user services. The niri session initializes
-GTK interface and monospace defaults to `Maple Mono NF CN`; Noctalia uses the
-same family.
+The Niri profile links shared configuration through `common`. The Niri session
+initializes GTK interface and monospace defaults to `Maple Mono NF CN`;
+Noctalia uses the same family. Plasma uses its stock session configuration.
 
 Wallpaper collection state lives under
 `$XDG_STATE_HOME/wallpaper-collection/state.json`, independent of either
 compositor. Use `Mod+Ctrl+Escape` for the main collection,
 `Mod+Shift+Escape` for the SFW collection, and `Mod+Alt+Escape` for the animated
 collection. `Mod+Escape` advances within the selected collection through
-Noctalia on niri or the existing `awww` slideshow on Hyprland. Niri's
-shortcut-inhibit toggle moves to `Mod+Ctrl+Alt+Escape`. Animated selections use
+the active desktop backend. Niri's shortcut-inhibit toggle moves to
+`Mod+Ctrl+Alt+Escape`. Animated selections use
 the repository-owned Noctalia `mpvpaper` plugin to keep distinct per-output
 animation visible through background effects.
 
@@ -146,15 +132,14 @@ Noctalia runs as a Niri-started user service with `Restart=on-failure`.
 Noctalia 5.1 can disconnect from Niri while acquiring the session lock before
 suspend: Niri reports `ext_session_lock_v1` error 3 (`DUPLICATE_OUTPUT`), which
 removes the bar and wallpaper together. The service is a temporary recovery
-measure for the upstream lock lifecycle bug; it is not enabled globally and
-therefore does not start in Hyprland. Remove the service and restore direct
-Niri startup after the upstream fix is installed and a suspend/resume test
-passes.
+measure for the upstream lock lifecycle bug. Remove the service and restore
+direct Niri startup after the upstream fix is installed and a suspend/resume
+test passes.
 
-Both desktop profiles install and start EasyEffects and `udiskie --tray` once
-per session. In Niri, Noctalia replaces the Hypr idle, polkit, notification,
-clipboard, bar, and wallpaper processes. Hardware-specific overlays such as
-BongoCat belong in ignored host-local configuration.
+Niri starts EasyEffects and `udiskie --tray` once per session. Noctalia owns
+idle, polkit, notifications, clipboard, bar, and wallpaper. Plasma remains
+stock and owns its services only during a Plasma session. Hardware-specific
+overlays such as BongoCat belong in ignored host-local configuration.
 
 ## Multi-host rollout
 
@@ -167,17 +152,8 @@ untracked `~/.config/niri/local.kdl`. Desktop-system package records and
 root-file backups live in each host's local XDG state directory, so applying or
 removing a profile on one machine cannot affect another.
 
-Before applying on `ishimura`:
-
-1. capture its current monitor, input, portal, greeter, and service state;
-2. create its `local.kdl` from `local.example.kdl`;
-3. run profile and desktop-system plan commands;
-4. compare results with the current strict-Niri baseline;
-5. apply without copying current host's generated Noctalia state.
-
-The current inventory, preservation requirements, staged cutover, acceptance
-gates, and rollback procedure are documented in
-[`docs/ishimura-migration.md`](docs/ishimura-migration.md).
+`ishimura` follows the same strict-Niri profile. Its monitor/GPU overrides stay
+in `local.kdl`; generated Noctalia state is never copied between hosts.
 
 ### Existing installations
 
@@ -196,9 +172,9 @@ Apply after reviewing the exact paths:
 ```
 
 Migration removes only symlinks resolving into retired paths inside this
-repository. Existing real `dev.env`, Copilot settings, and legacy Waybar
-watcher unit files receive timestamped sibling backups before Stow takes
-ownership. Arbitrary files and external symlinks remain untouched.
+repository. Existing real `dev.env` and Copilot settings receive timestamped
+sibling backups before Stow takes ownership. Arbitrary files and external
+symlinks remain untouched.
 
 ## Desktop-system setup on Arch
 
@@ -213,8 +189,8 @@ ownership. Arbitrary files and external symlinks remain untouched.
 - manage `/etc/NetworkManager/dispatcher.d/09-timezone`, which runs `tzupdate`
   on network `up` so the system timezone follows IP geolocation after travel.
 
-The timezone dispatcher is common root integration applied for every profile
-(`niri` and `hypr`), not a niri-only root template.
+The timezone dispatcher is common root integration applied with the Niri
+system setup.
 
 Its scope stops there. It never inventories unrelated packages, edits unrelated
 `/etc`, performs generic orphan cleanup, or removes packages it did not record
@@ -290,8 +266,8 @@ Navigation follows one modifier grammar: plain `Mod` focuses within a
 workspace, `Mod+Shift` moves within it, `Mod+Ctrl` focuses workspaces,
 `Mod+Ctrl+Shift` moves columns between workspaces, `Mod+Alt` focuses monitors,
 and `Mod+Alt+Shift` moves columns between monitors. Output-name bindings remain
-host-local. The old i3 and current Hypr configs are references for missing
-actions, not templates for forcing niri into an i3 layout.
+host-local. The archived i3 config is a reference for missing actions, not a
+template for forcing Niri into an i3 layout.
 
 ### First-login cheatsheet
 
@@ -376,7 +352,7 @@ window-rule {
 Tracked config is `packages/noctalia/dot-config/noctalia/config.toml`.
 Noctalia v5 merges every `*.toml` in `~/.config/noctalia/`, then applies
 GUI-generated state under `~/.local/state/noctalia/`; GUI state has higher
-precedence. Use tracked TOML for stable intent and GUI settings for trial
+precedence. Use tracked TOML for stable intent and GUI settings for runtime
 adjustments.
 
 Wallpaper directories require absolute paths. Copy the host-local example after
@@ -400,8 +376,7 @@ Noctalia owns:
 - polkit agent;
 - OSD and power/session UI.
 
-The niri profile therefore does not start Waybar, mako, tofi, clipse, awww,
-hyprlock, hypridle, hyprpolkitagent, or wlogout.
+Noctalia is the only shell layer started by the Niri profile.
 
 ## Greeter recovery
 
@@ -450,8 +425,8 @@ Niri uses:
 - `gnome-keyring` for Secret portal support.
 
 Policy is explicit in
-`system/arch/xdg-desktop-portal/niri-portals.conf`. The niri session must not
-start or select `xdg-desktop-portal-hyprland`.
+`system/arch/xdg-desktop-portal/niri-portals.conf`. Niri explicitly selects
+GNOME and GTK backends; Plasma uses KDE's backend in its own session.
 
 The niri package includes a scoped `xdg-desktop-portal-gnome` service override
 with `GDK_DEBUG=no-portals`. Without it, GTK inside the GNOME backend queries the
@@ -461,7 +436,9 @@ only the portal implementation; applications continue to use portals normally.
 
 ## Scripts submodule
 
-Desktop commands are linked from `modules/scripts/bin` into `~/.local/bin`.
+Desktop commands are linked from `modules/scripts/bin` into `~/.local/bin`;
+desktop backends are linked from `modules/scripts/libexec` into
+`~/.local/libexec/dotfiles`.
 See `modules/scripts/README.md` for command categories and dependencies.
 
 Update after the Scripts repository has published a new commit:
@@ -471,8 +448,8 @@ git submodule update --remote modules/scripts
 git add modules/scripts
 ```
 
-Hypr-only commands use a `hypr-` prefix. Reusable screenshot, archive, and
-wallpaper commands avoid compositor IPC.
+Public screenshot and wallpaper commands avoid compositor IPC and dispatch to
+Niri/Noctalia or Plasma backends.
 
 ## Governance and package-source policy
 

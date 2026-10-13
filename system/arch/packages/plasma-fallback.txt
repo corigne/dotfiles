@@ -1,0 +1,4 @@
+# Stock recovery desktop; No custom Plasma profile or display manager.
+plasma-workspace
+spectacle
+xdg-desktop-portal-kde

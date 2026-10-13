@@ -9,18 +9,18 @@ state_root=${XDG_STATE_HOME:-"$HOME/.local/state"}/dotfiles/system
 
 usage() {
     cat <<'EOF'
-Usage: desktop-system arch <niri|hypr> <check|plan|apply|verify|activate|remove|rollback>
+Usage: desktop-system arch niri <check|plan|apply|verify|activate|remove|rollback>
 
 Only desktop-profile packages, owned root templates, and owned services are
 managed. Unrelated packages and /etc files are never converged or removed.
 EOF
 }
 
-[ "$platform" = "arch" ] || { usage >&2; exit 2; }
-case "$profile" in niri|hypr) ;; *) usage >&2; exit 2 ;; esac
+[ "$platform" = arch ] && [ "$profile" = niri ] || { usage >&2; exit 2; }
 
-native_manifest="$repo_dir/system/arch/packages/$profile.txt"
-aur_manifest="$repo_dir/system/arch/packages/$profile.aur.txt"
+native_manifest="$repo_dir/system/arch/packages/niri.txt"
+plasma_manifest="$repo_dir/system/arch/packages/plasma-fallback.txt"
+aur_manifest="$repo_dir/system/arch/packages/niri.aur.txt"
 profile_state="$state_root/$profile"
 installed_state="$profile_state/installed-packages"
 backup_state="$profile_state/backups"
@@ -52,27 +52,23 @@ missing_packages() {
 }
 
 print_plan() {
-    printf '%s\n' "Native packages to install:"
+    printf '%s\n' "Niri packages to install:"
     missing_packages "$native_manifest"
+    printf '%s\n' "Plasma fallback packages to install:"
+    missing_packages "$plasma_manifest"
     printf '%s\n' "AUR packages to install:"
     missing_packages "$aur_manifest"
 
     printf '%s\n' "Root files to compare/install:"
     printf '%s\n' "  /etc/NetworkManager/dispatcher.d/09-timezone"
 
-    if [ "$profile" = "niri" ]; then
-        printf '%s\n' "  /etc/greetd/config.toml"
-        printf '%s\n' "  /etc/pam.d/greetd"
-        printf '%s\n' "  /etc/xdg-desktop-portal/niri-portals.conf"
-        printf '%s\n' "  /var/lib/noctalia-greeter/greeter.toml"
-        printf '%s\n' "  /usr/share/wayland-sessions/niri.desktop"
-        printf '%s\n' "  /usr/local/lib/dotfiles/niri-session"
-        printf '%s\n' "Retired fallback files to remove if unchanged:"
-        printf '%s\n' "  /usr/share/wayland-sessions/hyprland-uwsm.desktop"
-        printf '%s\n' "  /usr/local/lib/dotfiles/hide-hyprland-uwsm"
-        printf '%s\n' "  /etc/pacman.d/hooks/90-hide-hyprland-uwsm.hook"
-        printf '%s\n' "Service to enable after validation: greetd.service"
-    fi
+    printf '%s\n' "  /etc/greetd/config.toml"
+    printf '%s\n' "  /etc/pam.d/greetd"
+    printf '%s\n' "  /etc/xdg-desktop-portal/niri-portals.conf"
+    printf '%s\n' "  /var/lib/noctalia-greeter/greeter.toml"
+    printf '%s\n' "  /usr/share/wayland-sessions/niri.desktop"
+    printf '%s\n' "  /usr/local/lib/dotfiles/niri-session"
+    printf '%s\n' "Service to enable after validation: greetd.service"
 }
 
 apply_common_system() {
@@ -148,18 +144,6 @@ install_root_file() {
     sudo install -D -m "$mode" -o "$owner" -g "$group" "$source" "$target"
 }
 
-remove_retired_root_file() {
-    source=$1
-    target=$2
-
-    sudo test -e "$target" || return 0
-    if ! sudo test -f "$target" || ! sudo cmp -s "$source" "$target"; then
-        printf 'refusing to remove modified retired file: %s\n' "$target" >&2
-        return 1
-    fi
-    sudo rm -f "$target"
-}
-
 validate_niri_system() {
     require_command niri
     require_command noctalia
@@ -190,12 +174,16 @@ validate_niri_system() {
 
 apply_niri_system() {
     validate_niri_system
+    pam_source="$repo_dir/system/arch/pam/greetd"
+    if [ -f /usr/lib/security/pam_tpm_keyring_authtok.so ]; then
+        pam_source="$repo_dir/system/arch/pam/greetd-tpm"
+    fi
 
     install_root_file \
         "$repo_dir/system/arch/greetd/config.toml" \
         /etc/greetd/config.toml 0644 root root
     install_root_file \
-        "$repo_dir/system/arch/pam/greetd" \
+        "$pam_source" \
         /etc/pam.d/greetd 0644 root root
     install_root_file \
         "$repo_dir/system/arch/xdg-desktop-portal/niri-portals.conf" \
@@ -206,18 +194,9 @@ apply_niri_system() {
     install_root_file \
         "$repo_dir/system/arch/wayland-sessions/niri.desktop" \
         /usr/share/wayland-sessions/niri.desktop 0644 root root
-    remove_retired_root_file \
-        "$repo_dir/system/arch/wayland-sessions/hyprland-uwsm.desktop" \
-        /usr/share/wayland-sessions/hyprland-uwsm.desktop
     install_root_file \
         "$repo_dir/system/arch/libexec/niri-session" \
         /usr/local/lib/dotfiles/niri-session 0755 root root
-    remove_retired_root_file \
-        "$repo_dir/system/arch/libexec/hide-hyprland-uwsm" \
-        /usr/local/lib/dotfiles/hide-hyprland-uwsm
-    remove_retired_root_file \
-        "$repo_dir/system/arch/pacman-hooks/90-hide-hyprland-uwsm.hook" \
-        /etc/pacman.d/hooks/90-hide-hyprland-uwsm.hook
     sudo install -d -m 0750 -o greeter -g greeter /var/lib/noctalia-greeter
     install_root_file \
         "$repo_dir/system/arch/greetd/greeter.toml" \
@@ -247,8 +226,13 @@ verify_root_file() {
 
 verify_niri_system() {
     validate_niri_system
+    pam_source="$repo_dir/system/arch/pam/greetd"
+    if [ -f /usr/lib/security/pam_tpm_keyring_authtok.so ]; then
+        pam_source="$repo_dir/system/arch/pam/greetd-tpm"
+    fi
+
     verify_root_file "$repo_dir/system/arch/greetd/config.toml" /etc/greetd/config.toml 644 root root
-    verify_root_file "$repo_dir/system/arch/pam/greetd" /etc/pam.d/greetd 644 root root
+    verify_root_file "$pam_source" /etc/pam.d/greetd 644 root root
     verify_root_file "$repo_dir/system/arch/xdg-desktop-portal/niri-portals.conf" /etc/xdg-desktop-portal/niri-portals.conf 644 root root
     if getent passwd greetduser >/dev/null; then
         [ "$(getent passwd greetduser | cut -d: -f7)" = "/usr/bin/nologin" ] || {
@@ -258,16 +242,6 @@ verify_niri_system() {
     fi
     verify_root_file "$repo_dir/system/arch/wayland-sessions/niri.desktop" /usr/share/wayland-sessions/niri.desktop 644 root root
     verify_root_file "$repo_dir/system/arch/libexec/niri-session" /usr/local/lib/dotfiles/niri-session 755 root root
-    for retired in \
-        /usr/share/wayland-sessions/hyprland-uwsm.desktop \
-        /usr/local/lib/dotfiles/hide-hyprland-uwsm \
-        /etc/pacman.d/hooks/90-hide-hyprland-uwsm.hook
-    do
-        sudo test ! -e "$retired" || {
-            printf 'retired Hyprland fallback file remains: %s\n' "$retired" >&2
-            return 1
-        }
-    done
     verify_root_file "$repo_dir/system/arch/greetd/greeter.toml" /var/lib/noctalia-greeter/greeter.toml 644 greeter greeter
     [ "$(sudo stat -c '%U:%G %a' /var/lib/noctalia-greeter)" = "greeter:greeter 750" ] || {
         printf '%s\n' "greeter state directory has wrong owner or mode" >&2
@@ -289,28 +263,13 @@ remove_profile_packages() {
         return 0
     }
 
-    other_profile=hypr
-    [ "$profile" = "hypr" ] && other_profile=niri
-    other_native="$repo_dir/system/arch/packages/$other_profile.txt"
-    other_aur="$repo_dir/system/arch/packages/$other_profile.aur.txt"
     removable=
 
     printf '%s\n' "Packages recorded as introduced by profile:"
     while IFS= read -r package; do
         [ -n "$package" ] || continue
-        shared=false
-        for manifest in "$other_native" "$other_aur"; do
-            while IFS= read -r other_package || [ -n "$other_package" ]; do
-                [ "$package" = "$other_package" ] && shared=true
-            done <"$manifest"
-        done
-
-        if [ "$shared" = true ]; then
-            printf '  keep shared package: %s\n' "$package"
-        else
-            printf '  remove candidate: %s\n' "$package"
-            removable="$removable $package"
-        fi
+        printf '  remove candidate: %s\n' "$package"
+        removable="$removable $package"
     done <"$installed_state"
 
     [ -n "$removable" ] || {
@@ -359,6 +318,7 @@ case "$action" in
         require_command stow
         require_command tzupdate
         [ -f "$native_manifest" ]
+        [ -f "$plasma_manifest" ]
         [ -f "$aur_manifest" ]
         ;;
     plan)
@@ -368,25 +328,20 @@ case "$action" in
     apply)
         require_command pacman
         install_manifest "$native_manifest" "sudo pacman -S --needed --noconfirm"
+        install_manifest "$plasma_manifest" "sudo pacman -S --needed --noconfirm"
         if [ -n "$(missing_packages "$aur_manifest")" ]; then
             require_command paru
             install_manifest "$aur_manifest" "paru -S --needed --noconfirm"
         fi
         apply_common_system
-        if [ "$profile" = "niri" ]; then
-            apply_niri_system
-        fi
+        apply_niri_system
         ;;
     verify)
         verify_common_system
-        if [ "$profile" = "niri" ]; then
-            verify_niri_system
-        fi
+        verify_niri_system
         ;;
     activate)
-        if [ "$profile" = "niri" ]; then
-            activate_niri_system
-        fi
+        activate_niri_system
         ;;
     remove)
         remove_profile_packages

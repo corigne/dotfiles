@@ -1,6 +1,0 @@
-#!/bin/sh
-set -eu
-
-entry=/usr/share/wayland-sessions/hyprland-uwsm.desktop
-[ -f "$entry" ] || exit 0
-grep -qxF 'NoDisplay=true' "$entry" || printf '\nNoDisplay=true\n' >>"$entry"
