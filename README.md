@@ -190,7 +190,7 @@ symlinks remain untouched.
   on network `up` so the system timezone follows IP geolocation after travel.
 
 The timezone dispatcher is common root integration applied with the Niri
-system setup.
+system setup. Its `tzupdate` dependency is tracked in the Niri AUR manifest.
 
 Its scope stops there. It never inventories unrelated packages, edits unrelated
 `/etc`, performs generic orphan cleanup, or removes packages it did not record
