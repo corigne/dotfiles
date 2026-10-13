@@ -1,6 +1,5 @@
 if status is-interactive
     # Hydro prompt preferences (versioned here instead of universal vars)
-    set -g hydro_color_start cyan
     set -g hydro_color_prompt blue
     set -g hydro_color_git green
     set -g hydro_color_duration yellow
