@@ -86,6 +86,12 @@ Preview first:
 ./bin/dotfiles-profile plan niri
 ```
 
+The plan groups package and script changes, prints `+` for links, `-` for
+removals, and reports `no changes` for an already-applied section. A
+`BLOCKED` result is a real Stow conflict that must be resolved before apply;
+routine directory traversal is intentionally hidden. Large initial plans show
+counts by default; append `--verbose` to list every affected path.
+
 Apply:
 
 ```sh

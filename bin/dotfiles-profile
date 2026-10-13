@@ -5,11 +5,12 @@ repo_dir=$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)
 stow_dir="$repo_dir/packages"
 state_dir=${XDG_STATE_HOME:-"$HOME/.local/state"}/dotfiles
 state_file="$state_dir/profile"
+plan_verbose=0
 
 usage() {
     cat <<'EOF'
 Usage:
-  dotfiles-profile plan <niri|hypr|trial>
+  dotfiles-profile plan <niri|hypr|trial> [--verbose]
   dotfiles-profile apply <niri|hypr|trial>
   dotfiles-profile unstow [niri|hypr|trial]
   dotfiles-profile status
@@ -48,6 +49,79 @@ require_command() {
     }
 }
 
+print_stow_preview() {
+    label=$1
+    output=$2
+    status=$3
+    links=$(grep -c '^LINK: ' "$output" || true)
+    unlinks=$(grep -Ec '^(UNLINK|RMDIR): ' "$output" || true)
+    directories=$(grep -c '^MKDIR: ' "$output" || true)
+    changes=$((links + unlinks + directories))
+
+    printf '\n%s\n' "$label"
+    if [ "$status" -ne 0 ]; then
+        while IFS= read -r line; do
+            case "$line" in
+                "WARNING: in simulation mode so not modifying filesystem."|\
+                "LINK: "*|"UNLINK: "*|"RMDIR: "*|"MKDIR: "*|"")
+                    ;;
+                *)
+                    printf '  ! %s\n' "$line"
+                    ;;
+            esac
+        done <"$output"
+        printf '%s\n' "  BLOCKED: resolve the conflict above before applying."
+        return "$status"
+    fi
+
+    if [ "$changes" -gt 20 ] && [ "$plan_verbose" -ne 1 ]; then
+        printf '  %s links, %s removals, %s directories\n' \
+            "$links" "$unlinks" "$directories"
+        printf '%s\n' "  Run the same plan with --verbose to list every path."
+        return 0
+    fi
+
+    while IFS= read -r line; do
+        case "$line" in
+            "WARNING: in simulation mode so not modifying filesystem.")
+                ;;
+            "LINK: "*)
+                printf '  + %s\n' "${line#LINK: }"
+                ;;
+            "UNLINK: "*|"RMDIR: "*)
+                printf '  - %s\n' "${line#*: }"
+                ;;
+            "MKDIR: "*)
+                printf '  + %s/\n' "${line#MKDIR: }"
+                ;;
+            "")
+                ;;
+            *)
+                printf '  ! %s\n' "$line"
+                ;;
+        esac
+    done <"$output"
+
+    if [ "$changes" -eq 0 ] && [ "$status" -eq 0 ]; then
+        printf '%s\n' "  no changes"
+    fi
+}
+
+run_stow_preview() {
+    label=$1
+    shift
+    output=${TMPDIR:-/tmp}/dotfiles-profile-stow.$$
+
+    if "$@" >"$output" 2>&1; then
+        status=0
+    else
+        status=$?
+    fi
+    print_stow_preview "$label" "$output" "$status"
+    rm -f "$output"
+    return "$status"
+}
+
 run_stow() {
     mode=$1
     package_list=$2
@@ -56,10 +130,16 @@ run_stow() {
     # shellcheck disable=SC2086
     case "$mode" in
         plan-delete)
-            stow --simulate --delete --verbose=2 --no-folding --dotfiles --dir "$stow_dir" --target "$HOME" $package_list
+            # shellcheck disable=SC2086
+            run_stow_preview "Remove packages: $package_list" \
+                stow --simulate --delete --verbose=1 --no-folding --dotfiles \
+                --dir "$stow_dir" --target "$HOME" $package_list
             ;;
         plan-stow)
-            stow --simulate --stow --verbose=2 --no-folding --dotfiles --dir "$stow_dir" --target "$HOME" $package_list
+            # shellcheck disable=SC2086
+            run_stow_preview "Link packages: $package_list" \
+                stow --simulate --stow --verbose=1 --no-folding --dotfiles \
+                --dir "$stow_dir" --target "$HOME" $package_list
             ;;
         delete)
             stow --delete --verbose=1 --no-folding --dotfiles --dir "$stow_dir" --target "$HOME" $package_list
@@ -76,7 +156,9 @@ run_scripts_stow() {
     mkdir -p "$target"
     case "$mode" in
         plan-stow)
-            stow --simulate --stow --verbose=2 --dir "$repo_dir/modules/scripts" --target "$target" bin
+            run_stow_preview "Link scripts: modules/scripts/bin" \
+                stow --simulate --stow --verbose=1 \
+                --dir "$repo_dir/modules/scripts" --target "$target" bin
             ;;
         delete)
             stow --delete --verbose=1 --dir "$repo_dir/modules/scripts" --target "$target" bin
@@ -184,12 +266,18 @@ plan_profile() {
 
     require_scripts_submodule
 
+    printf '%s\n' "Dotfiles profile plan"
+    printf '  current:   %s\n' "${current:-none}"
+    printf '  requested: %s\n' "$profile"
+    printf '  packages:  %s\n' "$selected"
+
     if [ -n "$current" ] && [ "$current" != "$profile" ]; then
         remove=$(packages_to_remove "$(packages_for "$current")" "$selected")
         [ -n "$remove" ] && run_stow plan-delete "$remove"
     fi
     run_stow plan-stow "$selected"
     run_scripts_stow plan-stow
+    printf '\n%s\n' "Ready: ./bin/dotfiles-profile apply $profile"
 }
 
 apply_profile() {
@@ -309,7 +397,11 @@ audit_niri() {
 command=${1:-}
 case "$command" in
     plan)
-        [ "$#" -eq 2 ] || { usage >&2; exit 2; }
+        [ "$#" -ge 2 ] && [ "$#" -le 3 ] || { usage >&2; exit 2; }
+        if [ "$#" -eq 3 ]; then
+            [ "$3" = "--verbose" ] || { usage >&2; exit 2; }
+            plan_verbose=1
+        fi
         plan_profile "$2"
         ;;
     apply)
