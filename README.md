@@ -3,8 +3,8 @@
 Wayland-first dotfiles with explicit desktop profiles:
 
 - `niri`: primary desktop, niri + Noctalia + Noctalia Greeter
-- `hypr`: old Hyprland setup, archival purposes only
-- `trial`: both desktop configs, with session-owned services kept isolated
+- `hypr`: retired Hyprland setup, retained as source history only
+- `trial`: legacy migration profile, not used on active hosts
 - `common`: shell, terminals, editors, and shared tools
 
 GNU Stow owns user configuration. A small POSIX shell adapter owns only
@@ -17,7 +17,7 @@ portal policy. It does not manage or converge the whole Arch system.
 packages/common/       shared home configuration
 packages/niri/         niri configuration
 packages/noctalia/     Noctalia configuration
-packages/hypr/         optional Hyprland, Waybar, mako, and wlogout profile
+packages/hypr/         retired Hyprland, Waybar, mako, and wlogout archive
 archive/i3/            historical i3/polybar reference; never installed
 modules/scripts/       scripts Git submodule; bin/ is linked into ~/.local/bin
 system/arch/           Arch package manifests and owned root templates
@@ -62,12 +62,10 @@ No Python provisioning framework is required.
 
 ## Quick start
 
-Keep Hypr available during the trial:
-
 ```sh
 cd ~/.dotfiles
-./bin/dotfiles-profile plan trial
-./bin/dotfiles-profile apply trial
+./bin/dotfiles-profile plan niri
+./bin/dotfiles-profile apply niri
 ./bin/desktop-system arch niri plan
 ./bin/desktop-system arch niri apply
 ./bin/desktop-system arch niri verify
@@ -76,7 +74,7 @@ cd ~/.dotfiles
 
 Review each plan before applying it. `activate` enables greetd for the next
 boot; it does not replace the current session. Select **Niri** in Noctalia
-Greeter. Plain **Hyprland** remains available as fallback.
+Greeter.
 
 ## Apply a user profile
 
@@ -98,16 +96,14 @@ Apply:
 ./bin/dotfiles-profile apply niri
 ```
 
-During evaluation, keep both greeter sessions usable:
+The retired migration profile remains available for repository archaeology:
 
 ```sh
 ./bin/dotfiles-profile apply trial
 ```
 
-`trial` installs both desktop configs but does not start either desktop's
-components globally. Greeter exposes plain Hyprland as fallback while hiding
-the unused UWSM-managed duplicate. After accepting niri, switch to strict
-`niri`.
+`trial` installs both desktop configs but is no longer used on active hosts.
+Do not install its Hyprland packages or expose a Hyprland greeter session.
 
 Other commands:
 
@@ -120,10 +116,10 @@ Other commands:
 ```
 
 Profile switching removes links from the previously recorded profile, links the
-new profile, and keeps shared files through `common`. It also disables and
-stops globally enabled Hypr-only user services when selecting niri. Hypr starts
-them only inside its own session. The niri session initializes GTK interface
-and monospace defaults to `Maple Mono NF CN`; Noctalia uses the same family.
+new profile, and keeps shared files through `common`. Selecting niri disables
+and stops globally enabled Hypr-only user services. The niri session initializes
+GTK interface and monospace defaults to `Maple Mono NF CN`; Noctalia uses the
+same family.
 
 Wallpaper collection state lives under
 `$XDG_STATE_HOME/wallpaper-collection/state.json`, independent of either
@@ -176,7 +172,7 @@ Before applying on `ishimura`:
 1. capture its current monitor, input, portal, greeter, and service state;
 2. create its `local.kdl` from `local.example.kdl`;
 3. run profile and desktop-system plan commands;
-4. compare results with current-host trial findings;
+4. compare results with the current strict-Niri baseline;
 5. apply without copying current host's generated Noctalia state.
 
 The current inventory, preservation requirements, staged cutover, acceptance

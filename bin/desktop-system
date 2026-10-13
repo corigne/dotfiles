@@ -66,8 +66,9 @@ print_plan() {
         printf '%s\n' "  /etc/xdg-desktop-portal/niri-portals.conf"
         printf '%s\n' "  /var/lib/noctalia-greeter/greeter.toml"
         printf '%s\n' "  /usr/share/wayland-sessions/niri.desktop"
-        printf '%s\n' "  /usr/share/wayland-sessions/hyprland-uwsm.desktop"
         printf '%s\n' "  /usr/local/lib/dotfiles/niri-session"
+        printf '%s\n' "Retired fallback files to remove if unchanged:"
+        printf '%s\n' "  /usr/share/wayland-sessions/hyprland-uwsm.desktop"
         printf '%s\n' "  /usr/local/lib/dotfiles/hide-hyprland-uwsm"
         printf '%s\n' "  /etc/pacman.d/hooks/90-hide-hyprland-uwsm.hook"
         printf '%s\n' "Service to enable after validation: greetd.service"
@@ -147,6 +148,18 @@ install_root_file() {
     sudo install -D -m "$mode" -o "$owner" -g "$group" "$source" "$target"
 }
 
+remove_retired_root_file() {
+    source=$1
+    target=$2
+
+    sudo test -e "$target" || return 0
+    if ! sudo test -f "$target" || ! sudo cmp -s "$source" "$target"; then
+        printf 'refusing to remove modified retired file: %s\n' "$target" >&2
+        return 1
+    fi
+    sudo rm -f "$target"
+}
+
 validate_niri_system() {
     require_command niri
     require_command noctalia
@@ -193,18 +206,18 @@ apply_niri_system() {
     install_root_file \
         "$repo_dir/system/arch/wayland-sessions/niri.desktop" \
         /usr/share/wayland-sessions/niri.desktop 0644 root root
-    install_root_file \
+    remove_retired_root_file \
         "$repo_dir/system/arch/wayland-sessions/hyprland-uwsm.desktop" \
-        /usr/share/wayland-sessions/hyprland-uwsm.desktop 0644 root root
+        /usr/share/wayland-sessions/hyprland-uwsm.desktop
     install_root_file \
         "$repo_dir/system/arch/libexec/niri-session" \
         /usr/local/lib/dotfiles/niri-session 0755 root root
-    install_root_file \
+    remove_retired_root_file \
         "$repo_dir/system/arch/libexec/hide-hyprland-uwsm" \
-        /usr/local/lib/dotfiles/hide-hyprland-uwsm 0755 root root
-    install_root_file \
+        /usr/local/lib/dotfiles/hide-hyprland-uwsm
+    remove_retired_root_file \
         "$repo_dir/system/arch/pacman-hooks/90-hide-hyprland-uwsm.hook" \
-        /etc/pacman.d/hooks/90-hide-hyprland-uwsm.hook 0644 root root
+        /etc/pacman.d/hooks/90-hide-hyprland-uwsm.hook
     sudo install -d -m 0750 -o greeter -g greeter /var/lib/noctalia-greeter
     install_root_file \
         "$repo_dir/system/arch/greetd/greeter.toml" \
@@ -244,10 +257,17 @@ verify_niri_system() {
         }
     fi
     verify_root_file "$repo_dir/system/arch/wayland-sessions/niri.desktop" /usr/share/wayland-sessions/niri.desktop 644 root root
-    verify_root_file "$repo_dir/system/arch/wayland-sessions/hyprland-uwsm.desktop" /usr/share/wayland-sessions/hyprland-uwsm.desktop 644 root root
     verify_root_file "$repo_dir/system/arch/libexec/niri-session" /usr/local/lib/dotfiles/niri-session 755 root root
-    verify_root_file "$repo_dir/system/arch/libexec/hide-hyprland-uwsm" /usr/local/lib/dotfiles/hide-hyprland-uwsm 755 root root
-    verify_root_file "$repo_dir/system/arch/pacman-hooks/90-hide-hyprland-uwsm.hook" /etc/pacman.d/hooks/90-hide-hyprland-uwsm.hook 644 root root
+    for retired in \
+        /usr/share/wayland-sessions/hyprland-uwsm.desktop \
+        /usr/local/lib/dotfiles/hide-hyprland-uwsm \
+        /etc/pacman.d/hooks/90-hide-hyprland-uwsm.hook
+    do
+        sudo test ! -e "$retired" || {
+            printf 'retired Hyprland fallback file remains: %s\n' "$retired" >&2
+            return 1
+        }
+    done
     verify_root_file "$repo_dir/system/arch/greetd/greeter.toml" /var/lib/noctalia-greeter/greeter.toml 644 greeter greeter
     [ "$(sudo stat -c '%U:%G %a' /var/lib/noctalia-greeter)" = "greeter:greeter 750" ] || {
         printf '%s\n' "greeter state directory has wrong owner or mode" >&2

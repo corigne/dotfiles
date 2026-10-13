@@ -274,7 +274,6 @@ layout {
 // which may be more convenient to use.
 // See the binds section below for more spawn examples.
 
-spawn-at-startup "awww-slideshow-control" "stop"
 spawn-at-startup "gsettings" "set" "org.gnome.desktop.interface" "font-name" "Maple Mono NF CN 10"
 spawn-at-startup "gsettings" "set" "org.gnome.desktop.interface" "monospace-font-name" "Maple Mono NF CN 10"
 spawn-at-startup "systemctl" "--user" "restart" "noctalia.service"

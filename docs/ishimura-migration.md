@@ -140,14 +140,15 @@ live Niri test demonstrates a conflict.
    original path.
 3. Rename, never delete, the old repositories to timestamped legacy paths.
 4. Rename `~/.dotfiles-next` to `~/.dotfiles`.
-5. Apply the `trial` profile, retaining plain Hyprland as fallback.
+5. Apply the strict `niri` profile.
 6. Apply and verify the Arch niri system profile.
 7. Confirm Fish no longer auto-starts Hyprland.
 8. Activate greetd only after every check passes.
 
 ### 4. Acceptance gates
 
-- Noctalia Greeter shows Niri, plain Hyprland, and Plasma only.
+- Noctalia Greeter shows Niri and any independently maintained non-Hypr
+  sessions only.
 - Only `nexus` appears as a login user.
 - Niri uses RX 7900 XTX `renderD128`; connectorless iGPU is ignored.
 - Both monitors retain position, scale, and 59.951 Hz baseline.
@@ -158,8 +159,8 @@ live Niri test demonstrates a conflict.
   tray, and session UI.
 - XWayland applications, browser screen sharing, OBS, file choosers, audio,
   screenshots, suspend/logout, and wallpaper controls work.
-- Plain Hyprland still starts with immediate lock, EasyEffects, wallpaper
-  slideshow, portal routing, and host-specific window rules.
+- No Hyprland package, portal, greeter entry, service, or active Stow link
+  remains.
 - Niri remains stable through monitor power cycles and at least one reboot.
 
 ## Rollback
