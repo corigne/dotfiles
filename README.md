@@ -324,7 +324,7 @@ defines the same device type. Keep all effective touchpad options together in
 Validate after changes:
 
 ```sh
-niri validate
+~/.local/lib/niri-private/niri validate
 ```
 
 ## Window rules and opacity
@@ -336,7 +336,7 @@ Rules live in `~/.config/niri/rules.kdl`.
 3. Prefer anchored `app-id` regexes; use titles only when app ID cannot
    distinguish a dialog.
 4. Put full-opacity exceptions after broad opacity rules.
-5. Run `niri validate`.
+5. Run `~/.local/lib/niri-private/niri validate`.
 
 Example:
 
