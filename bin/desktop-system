@@ -51,6 +51,18 @@ missing_packages() {
     done
 }
 
+has_battery() {
+    for supply in /sys/class/power_supply/BAT*; do
+        [ -e "$supply" ] && return 0
+    done
+    return 1
+}
+
+has_nvidia_gpu() {
+    [ -d /sys/bus/pci/drivers/nvidia ] &&
+        find /sys/bus/pci/drivers/nvidia -maxdepth 1 -type l | grep -q .
+}
+
 print_plan() {
     printf '%s\n' "Niri packages to install:"
     missing_packages "$native_manifest"
@@ -68,7 +80,20 @@ print_plan() {
     printf '%s\n' "  /var/lib/noctalia-greeter/greeter.toml"
     printf '%s\n' "  /usr/share/wayland-sessions/niri.desktop"
     printf '%s\n' "  /usr/local/lib/dotfiles/niri-session"
+    if has_battery; then
+        printf '%s\n' "Laptop power files to compare/install:"
+        printf '%s\n' "  /etc/UPower/UPower.conf.d/90-dotfiles-laptop.conf"
+        printf '%s\n' "  /etc/systemd/logind.conf.d/60-lid-policy.conf"
+        printf '%s\n' "  /etc/systemd/sleep.conf.d/60-safe-suspend.conf"
+    fi
     printf '%s\n' "Service to enable after validation: greetd.service"
+    if has_battery && has_nvidia_gpu; then
+        printf '%s\n' "NVIDIA sleep services to enable:"
+        printf '%s\n' "  nvidia-suspend.service"
+        printf '%s\n' "  nvidia-hibernate.service"
+        printf '%s\n' "  nvidia-resume.service"
+        printf '%s\n' "  nvidia-suspend-then-hibernate.service"
+    fi
 }
 
 apply_common_system() {
@@ -80,6 +105,64 @@ apply_common_system() {
 
 verify_common_system() {
     verify_root_file "$repo_dir/system/arch/networkmanager/dispatcher.d/09-timezone" /etc/NetworkManager/dispatcher.d/09-timezone 755 root root
+}
+
+apply_laptop_power_system() {
+    has_battery || return 0
+
+    install_root_file \
+        "$repo_dir/system/arch/upower/UPower.conf.d/90-dotfiles-laptop.conf" \
+        /etc/UPower/UPower.conf.d/90-dotfiles-laptop.conf 0644 root root
+    install_root_file \
+        "$repo_dir/system/arch/systemd/logind.conf.d/60-lid-policy.conf" \
+        /etc/systemd/logind.conf.d/60-lid-policy.conf 0644 root root
+    install_root_file \
+        "$repo_dir/system/arch/systemd/sleep.conf.d/60-safe-suspend.conf" \
+        /etc/systemd/sleep.conf.d/60-safe-suspend.conf 0644 root root
+
+    sudo systemctl restart upower.service
+    sudo systemctl kill -s HUP systemd-logind.service
+
+    if has_nvidia_gpu; then
+        sudo systemctl enable \
+            nvidia-suspend.service \
+            nvidia-hibernate.service \
+            nvidia-resume.service \
+            nvidia-suspend-then-hibernate.service
+    fi
+}
+
+verify_laptop_power_system() {
+    has_battery || return 0
+
+    verify_root_file \
+        "$repo_dir/system/arch/upower/UPower.conf.d/90-dotfiles-laptop.conf" \
+        /etc/UPower/UPower.conf.d/90-dotfiles-laptop.conf 644 root root
+    verify_root_file \
+        "$repo_dir/system/arch/systemd/logind.conf.d/60-lid-policy.conf" \
+        /etc/systemd/logind.conf.d/60-lid-policy.conf 644 root root
+    verify_root_file \
+        "$repo_dir/system/arch/systemd/sleep.conf.d/60-safe-suspend.conf" \
+        /etc/systemd/sleep.conf.d/60-safe-suspend.conf 644 root root
+
+    [ "$(busctl call org.freedesktop.UPower /org/freedesktop/UPower org.freedesktop.UPower GetCriticalAction)" = 's "Sleep"' ] || {
+        printf '%s\n' "UPower critical action must resolve to systemd Sleep" >&2
+        return 1
+    }
+
+    if has_nvidia_gpu; then
+        for service in \
+            nvidia-suspend.service \
+            nvidia-hibernate.service \
+            nvidia-resume.service \
+            nvidia-suspend-then-hibernate.service
+        do
+            systemctl is-enabled --quiet "$service" || {
+                printf 'required NVIDIA sleep service is not enabled: %s\n' "$service" >&2
+                return 1
+            }
+        done
+    fi
 }
 
 install_manifest() {
@@ -335,10 +418,12 @@ case "$action" in
         fi
         apply_common_system
         apply_niri_system
+        apply_laptop_power_system
         ;;
     verify)
         verify_common_system
         verify_niri_system
+        verify_laptop_power_system
         ;;
     activate)
         activate_niri_system

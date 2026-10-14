@@ -188,9 +188,18 @@ symlinks remain untouched.
 - enable a system display-manager service;
 - manage `/etc/NetworkManager/dispatcher.d/09-timezone`, which runs `tzupdate`
   on network `up` so the system timezone follows IP geolocation after travel.
+- on battery-equipped hosts, suspend through systemd at 15% and use
+  battery-aware suspend-then-hibernate to preserve the session before
+  exhaustion.
 
 The timezone dispatcher is common root integration applied with the Niri
 system setup. Its `tzupdate` dependency is tracked in the Niri AUR manifest.
+
+Laptop power policy uses UPower only to request systemd's generic `Sleep`
+operation at 15%. systemd selects `suspend-then-hibernate`, enters deep suspend,
+then hibernates on the built-in 5% ACPI battery alarm or after two hours,
+whichever comes first. RTC wake requires firmware wake-alarm support. NVIDIA
+sleep services are enabled only when an NVIDIA GPU is present.
 
 Its scope stops there. It never inventories unrelated packages, edits unrelated
 `/etc`, performs generic orphan cleanup, or removes packages it did not record
