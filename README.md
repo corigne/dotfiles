@@ -436,6 +436,16 @@ Niri uses:
 Policy is explicit in
 `system/arch/xdg-desktop-portal/niri-portals.conf`. Niri explicitly selects
 GNOME and GTK backends; Plasma uses KDE's backend in its own session.
+Thunar remains the default graphical file manager for opening directories, but
+it cannot act as a portal file chooser because it has no chooser mode that
+returns selected paths to the calling application.
+
+`desktop-system arch niri apply` archives a legacy per-user
+`~/.config/xdg-desktop-portal/niri-portals.conf` with a timestamped
+`.dotfiles-backup-*` suffix. Per-user policy takes precedence over `/etc`, so
+leaving that file in place can silently force Firefox and other portal clients
+back to a KDE or termfilechooser picker. Start a new session after changing
+portal policy.
 
 The niri package includes a scoped `xdg-desktop-portal-gnome` service override
 with `GDK_DEBUG=no-portals`. Without it, GTK inside the GNOME backend queries the

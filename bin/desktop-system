@@ -24,6 +24,7 @@ aur_manifest="$repo_dir/system/arch/packages/niri.aur.txt"
 profile_state="$state_root/$profile"
 installed_state="$profile_state/installed-packages"
 backup_state="$profile_state/backups"
+user_portal_policy=${XDG_CONFIG_HOME:-"$HOME/.config"}/xdg-desktop-portal/niri-portals.conf
 
 require_command() {
     command -v "$1" >/dev/null 2>&1 || {
@@ -85,6 +86,10 @@ print_plan() {
         printf '%s\n' "  /etc/UPower/UPower.conf.d/90-dotfiles-laptop.conf"
         printf '%s\n' "  /etc/systemd/logind.conf.d/60-lid-policy.conf"
         printf '%s\n' "  /etc/systemd/sleep.conf.d/60-safe-suspend.conf"
+    fi
+    if [ -e "$user_portal_policy" ] || [ -L "$user_portal_policy" ]; then
+        printf '%s\n' "Legacy user portal policy to archive:"
+        printf '  %s\n' "$user_portal_policy"
     fi
     printf '%s\n' "Service to enable after validation: greetd.service"
     if has_battery && has_nvidia_gpu; then
@@ -227,6 +232,22 @@ install_root_file() {
     sudo install -D -m "$mode" -o "$owner" -g "$group" "$source" "$target"
 }
 
+archive_user_portal_policy() {
+    [ -e "$user_portal_policy" ] || [ -L "$user_portal_policy" ] || return 0
+
+    timestamp=$(date +%Y%m%d%H%M%S)
+    backup="${user_portal_policy}.dotfiles-backup-${timestamp}"
+    suffix=0
+    while [ -e "$backup" ] || [ -L "$backup" ]; do
+        suffix=$((suffix + 1))
+        backup="${user_portal_policy}.dotfiles-backup-${timestamp}-${suffix}"
+    done
+
+    mv "$user_portal_policy" "$backup"
+    printf 'archived legacy user portal policy: %s -> %s\n' \
+        "$user_portal_policy" "$backup"
+}
+
 validate_niri_system() {
     require_command niri
     require_command noctalia
@@ -257,6 +278,7 @@ validate_niri_system() {
 
 apply_niri_system() {
     validate_niri_system
+    archive_user_portal_policy
     pam_source="$repo_dir/system/arch/pam/greetd"
     if [ -f /usr/lib/security/pam_tpm_keyring_authtok.so ]; then
         pam_source="$repo_dir/system/arch/pam/greetd-tpm"
@@ -309,6 +331,11 @@ verify_root_file() {
 
 verify_niri_system() {
     validate_niri_system
+    if [ -e "$user_portal_policy" ] || [ -L "$user_portal_policy" ]; then
+        printf 'user portal policy overrides managed system policy: %s\n' \
+            "$user_portal_policy" >&2
+        return 1
+    fi
     pam_source="$repo_dir/system/arch/pam/greetd"
     if [ -f /usr/lib/security/pam_tpm_keyring_authtok.so ]; then
         pam_source="$repo_dir/system/arch/pam/greetd-tpm"
