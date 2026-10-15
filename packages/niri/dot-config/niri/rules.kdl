@@ -69,7 +69,19 @@ window-rule {
 }
 
 window-rule {
+    match app-id=r#"^org\.mozilla\.Thunderbird$"#
+    // Thunderbird can shrink its buffer after receiving the tiled-state hint.
+    tiled-state false
+}
+
+window-rule {
     match app-id=r#"^org\.mozilla\.Thunderbird$"# title=r#"^Write:\s.+"#
+    open-floating true
+    default-column-width { fixed 800; }
+    default-window-height { fixed 600; }
+}
+
+window-rule {
     match app-id=r#"^org\.mozilla\.Thunderbird$"# title=r#".*Reminders.*"#
     open-floating true
 }
