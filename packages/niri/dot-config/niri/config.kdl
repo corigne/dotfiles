@@ -436,23 +436,23 @@ binds {
 
     Mod+Q repeat=false { close-window; }
 
-    Mod+Left  { focus-column-left; }
-    Mod+Down  { focus-window-down; }
-    Mod+Up    { focus-window-up; }
-    Mod+Right { focus-column-right; }
-    Mod+H     { focus-column-or-monitor-left; }
-    Mod+J     { focus-window-or-monitor-down; }
-    Mod+K     { focus-window-or-monitor-up; }
-    Mod+L     { focus-column-or-monitor-right; }
+    Mod+Left  { spawn "niri-physical-direction" "focus" "left"; }
+    Mod+Down  { spawn "niri-physical-direction" "focus" "down"; }
+    Mod+Up    { spawn "niri-physical-direction" "focus" "up"; }
+    Mod+Right { spawn "niri-physical-direction" "focus" "right"; }
+    Mod+H     { spawn "niri-physical-direction" "focus-or-monitor" "left"; }
+    Mod+J     { spawn "niri-physical-direction" "focus-or-monitor" "down"; }
+    Mod+K     { spawn "niri-physical-direction" "focus-or-monitor" "up"; }
+    Mod+L     { spawn "niri-physical-direction" "focus-or-monitor" "right"; }
 
-    Mod+Shift+Left  { move-column-left; }
-    Mod+Shift+Down  { move-window-down; }
-    Mod+Shift+Up    { move-window-up; }
-    Mod+Shift+Right { move-column-right; }
-    Mod+Shift+H     { move-column-left-or-to-monitor-left; }
-    Mod+Shift+J     { move-window-down; }
-    Mod+Shift+K     { move-window-up; }
-    Mod+Shift+L     { move-column-right-or-to-monitor-right; }
+    Mod+Shift+Left  { spawn "niri-physical-direction" "move" "left"; }
+    Mod+Shift+Down  { spawn "niri-physical-direction" "move" "down"; }
+    Mod+Shift+Up    { spawn "niri-physical-direction" "move" "up"; }
+    Mod+Shift+Right { spawn "niri-physical-direction" "move" "right"; }
+    Mod+Shift+H     { spawn "niri-physical-direction" "move-or-monitor" "left"; }
+    Mod+Shift+J     { spawn "niri-physical-direction" "move" "down"; }
+    Mod+Shift+K     { spawn "niri-physical-direction" "move" "up"; }
+    Mod+Shift+L     { spawn "niri-physical-direction" "move-or-monitor" "right"; }
 
     // Alternative commands that move across workspaces when reaching
     // the first or last window in a column.

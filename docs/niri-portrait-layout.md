@@ -95,10 +95,21 @@ layout {
 No tracked shared configuration enables portrait mode. This prevents the
 experiment from crossing into Necromorph or future hosts automatically.
 
+Ishimura also lists `DP-2` in the ignored host-local file:
+
+```text
+~/.config/niri/vertical-main-axis-outputs
+```
+
+Tracked directional keybinds call `niri-physical-direction`, which uses this
+list to keep arrow and HJKL focus/move commands physically oriented. Hosts
+without this file retain the normal horizontal action mapping.
+
 ## Partial rollback: layout only
 
 Keep the experimental binary but remove the `layout` block above from
-`~/.config/niri/local.kdl`, then validate and reload:
+`~/.config/niri/local.kdl` and remove `DP-2` from
+`~/.config/niri/vertical-main-axis-outputs`, then validate and reload:
 
 ```sh
 ~/.local/lib/niri-private/niri validate
