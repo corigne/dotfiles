@@ -153,6 +153,16 @@ After the new session starts:
    screenshot UI follow the selected output axis.
 6. Window blur and `blur-opacity` remain active.
 
+### Activation record
+
+Activated successfully on Ishimura on 2026-10-17. Live use confirmed:
+
+- `DP-1` retains the horizontal layout;
+- `DP-2` stacks and scrolls windows vertically;
+- `DP-2` workspaces move horizontally;
+- overview and input behavior remain usable;
+- window blur and `blur-opacity` remain active.
+
 ## Retirement
 
 Track `niri-wm/niri#1071`. When upstream ships portrait layout:
