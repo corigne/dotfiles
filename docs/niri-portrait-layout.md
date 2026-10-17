@@ -102,8 +102,10 @@ Ishimura also lists `DP-2` in the ignored host-local file:
 ```
 
 Tracked directional keybinds call `niri-physical-direction`, which uses this
-list to keep arrow and HJKL focus/move commands physically oriented. Hosts
-without this file retain the normal horizontal action mapping.
+list to keep arrow and HJKL focus/move commands physically oriented. On DP-2,
+Left/Right switch horizontal workspaces and Up/Down traverse vertical columns;
+Shift moves the focused column in the same physical direction. Hosts without
+this file retain the normal horizontal action mapping.
 
 ## Partial rollback: layout only
 
