@@ -96,6 +96,25 @@ Niri cannot replace the running compositor process. Log out and start a new
 Niri session after installing. The old process will reject `main-axis` during
 automatic reload but retains its previous valid configuration until logout.
 
+The shell command `niri` resolves to Arch's `/usr/bin/niri`, currently
+`26.04 (8ed0da4)`. The session override launches the private compositor binary
+instead. A version warning from `niri msg version` is therefore expected while
+the packaged IPC client remains compatible. Do not replace the packaged binary.
+Verify the running compositor directly:
+
+```sh
+pid=$(pgrep -n '^niri$')
+readlink -f "/proc/$pid/exe"
+"/proc/$pid/exe" --version
+```
+
+Expected executable and version:
+
+```text
+/home/nexus/.local/lib/niri-private/niri
+niri 26.04 (8a6a447a)
+```
+
 ## Host-local configuration
 
 Ishimura owns this untracked block inside `output "DP-2"`:
@@ -225,7 +244,9 @@ non-zero. It does not return success after a failed action.
 
 After the new session starts:
 
-1. `niri msg version` and `niri --version` report the experiment commit.
+1. `/proc/$(pgrep -n '^niri$')/exe` resolves to the private binary and reports
+   the experiment commit. The packaged `/usr/bin/niri` CLI may report its own
+   version and an expected mismatch warning.
 2. `DP-1` still creates and scrolls columns horizontally.
 3. New windows on `DP-2` occupy half its physical height and scroll vertically.
 4. `Mod+Right` on `DP-2` selects the workspace physically to the right;
