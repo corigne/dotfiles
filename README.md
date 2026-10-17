@@ -41,7 +41,7 @@ Repository topology:
 | `~/.dotfiles/modules/scripts` | `git@github.com:corigne/scripts.git` | Shared desktop commands linked into `~/.local/bin` |
 | `~/.dotfiles/packages/common/dot-config/nvim` | `git@github.com:corigne/dot-neovim.git` | Neovim configuration |
 | `~/.dotfiles/packages/common/dot-config/tmux` | `git@github.com:corigne/dot-tmux.git` | tmux configuration |
-| `~/Projects/niri` | `https://github.com/corigne/niri-private.git` | Private `blur-opacity` Niri branch |
+| `~/dev/projects/niri` | `https://github.com/corigne/niri-private.git` | Private Niri branches for `blur-opacity` and reversible compositor experiments |
 
 ## Clone
 
@@ -335,6 +335,10 @@ Validate after changes:
 ```sh
 ~/.local/lib/niri-private/niri validate
 ```
+
+Ishimura's private portrait-layout experiment, provenance, limitations, and
+two-level rollback are documented in
+[`docs/niri-portrait-layout.md`](docs/niri-portrait-layout.md).
 
 ## Window rules and opacity
 
