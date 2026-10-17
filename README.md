@@ -295,14 +295,16 @@ Useful canonical starting points:
 | `Mod+Shift+Slash` | Open hotkey cheatsheet |
 | `Mod+O` | Toggle overview |
 | `Mod+Q` | Close focused window |
-| `Mod` + arrows | Focus by physical direction; on a vertical-main-axis output Left/Right switch workspaces and Up/Down traverse columns |
+| `Mod` + arrows | Focus windows and columns by physical direction within the current workspace |
 | `Mod` + H/J/K/L | Same physical mapping, with monitor fallback when the primary action cannot move |
-| `Mod+Shift` + arrows | Move by physical direction; on a vertical-main-axis output Left/Right send the column to another workspace and Up/Down reorder columns |
+| `Mod+Shift` + arrows | Move windows and columns by physical direction within the current workspace |
 | `Mod+Shift` + H/L | Same horizontal move mapping, with monitor fallback when the primary action cannot move |
 | `Mod` + wheel | Focus along the output's scrolling main axis |
 | `Mod+Shift` + wheel | Move along the output's scrolling main axis |
-| `Mod+Ctrl` + J/K, Up/Down, PageUp/PageDown, U/I, or wheel | Focus workspace |
-| `Mod+Ctrl+Shift` + workspace control | Send column to another workspace without following it |
+| `Mod+Ctrl` + arrows or H/J/K/L | Focus a workspace along its physical output axis |
+| `Mod+Ctrl+Shift` + arrows or H/J/K/L | Send column to a workspace along that axis without following it |
+| `Mod+Ctrl` + PageUp/PageDown, U/I, or wheel | Focus previous/next workspace logically |
+| `Mod+Ctrl+Shift` + PageUp/PageDown, U/I, or wheel | Send column to previous/next workspace without following it |
 | `Mod+Alt` + H/J/K/L, arrows, or wheel | Focus monitor |
 | `Mod+Alt+Shift` + monitor control | Move column between monitors |
 | `Mod+Alt+PageUp/PageDown` | Focus previous/next monitor |
@@ -313,6 +315,7 @@ Useful canonical starting points:
 | `Mod+F` | Maximize column |
 | `Mod+Shift+F` | Fullscreen window |
 | `Mod+V` | Toggle window floating |
+| `Mod+Ctrl+Delete` | Lock session |
 | `Mod+Shift+E` | Exit niri with confirmation |
 
 Use the overlay as source of truth; this table is only a learning shortlist.

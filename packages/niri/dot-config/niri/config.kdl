@@ -389,7 +389,7 @@ binds {
     // Suggested binds for running programs: terminal, app launcher, screen locker.
     Mod+T hotkey-overlay-title="Open a Terminal: Ghostty" { spawn "ghostty"; }
     Mod+D hotkey-overlay-title="Open Noctalia Launcher" { spawn "noctalia" "msg" "panel-toggle" "launcher"; }
-    Mod+Ctrl+L hotkey-overlay-title="Lock the Session" { spawn "noctalia" "msg" "session" "lock"; }
+    Mod+Ctrl+Delete hotkey-overlay-title="Lock the Session" { spawn "noctalia" "msg" "session" "lock"; }
     Mod+N hotkey-overlay-title="Open Yazi" { spawn "ghostty" "-e" "yazi"; }
     Mod+Shift+N hotkey-overlay-title="Open Thunar" { spawn "thunar"; }
     Mod+Shift+D hotkey-overlay-title="Open Noctalia Control Center" { spawn "noctalia" "msg" "panel-toggle" "control-center"; }
@@ -466,15 +466,23 @@ binds {
     Mod+Shift+Home { move-column-to-first; }
     Mod+Shift+End  { move-column-to-last; }
 
-    Mod+Ctrl+Down { focus-workspace-down; }
-    Mod+Ctrl+Up   { focus-workspace-up; }
-    Mod+Ctrl+J    { focus-workspace-down; }
-    Mod+Ctrl+K    { focus-workspace-up; }
+    Mod+Ctrl+Left  { spawn "niri-physical-direction" "workspace" "left"; }
+    Mod+Ctrl+Down  { spawn "niri-physical-direction" "workspace" "down"; }
+    Mod+Ctrl+Up    { spawn "niri-physical-direction" "workspace" "up"; }
+    Mod+Ctrl+Right { spawn "niri-physical-direction" "workspace" "right"; }
+    Mod+Ctrl+H     { spawn "niri-physical-direction" "workspace" "left"; }
+    Mod+Ctrl+J     { spawn "niri-physical-direction" "workspace" "down"; }
+    Mod+Ctrl+K     { spawn "niri-physical-direction" "workspace" "up"; }
+    Mod+Ctrl+L     { spawn "niri-physical-direction" "workspace" "right"; }
 
-    Mod+Ctrl+Shift+Down { move-column-to-workspace-down focus=false; }
-    Mod+Ctrl+Shift+Up   { move-column-to-workspace-up focus=false; }
-    Mod+Ctrl+Shift+J    { move-column-to-workspace-down focus=false; }
-    Mod+Ctrl+Shift+K    { move-column-to-workspace-up focus=false; }
+    Mod+Ctrl+Shift+Left  { spawn "niri-physical-direction" "move-workspace" "left"; }
+    Mod+Ctrl+Shift+Down  { spawn "niri-physical-direction" "move-workspace" "down"; }
+    Mod+Ctrl+Shift+Up    { spawn "niri-physical-direction" "move-workspace" "up"; }
+    Mod+Ctrl+Shift+Right { spawn "niri-physical-direction" "move-workspace" "right"; }
+    Mod+Ctrl+Shift+H     { spawn "niri-physical-direction" "move-workspace" "left"; }
+    Mod+Ctrl+Shift+J     { spawn "niri-physical-direction" "move-workspace" "down"; }
+    Mod+Ctrl+Shift+K     { spawn "niri-physical-direction" "move-workspace" "up"; }
+    Mod+Ctrl+Shift+L     { spawn "niri-physical-direction" "move-workspace" "right"; }
 
     Mod+Alt+Left  { focus-monitor-left; }
     Mod+Alt+Down  { focus-monitor-down; }

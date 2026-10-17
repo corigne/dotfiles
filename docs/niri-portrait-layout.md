@@ -142,10 +142,9 @@ DP-2
 ```
 
 Tracked directional keybinds call `niri-physical-direction`, which uses this
-list to keep arrow and HJKL focus/move commands physically oriented. On DP-2,
-Left/Right switch horizontal workspaces and Up/Down traverse vertical columns;
-Shift moves the focused column in the same physical direction. Hosts without
-this file retain the normal horizontal action mapping.
+list to keep each modifier layer physically oriented. `Mod` stays inside the
+current workspace, `Mod+Ctrl` changes workspaces, and `Mod+Alt` changes
+monitors. Hosts without this file retain the normal horizontal action mapping.
 
 The layout block and companion output list are one configuration invariant.
 Adding or removing a vertical layout requires changing both. The dispatcher
@@ -154,19 +153,18 @@ ordering; the explicit list keeps runtime behavior deterministic.
 
 ## Directional navigation
 
-| Output layout | Left/Right | Up/Down | Shift+Left/Right | Shift+Up/Down |
+| Output layout | `Mod` Left/Right | `Mod` Up/Down | `Mod+Ctrl` Left/Right | `Mod+Ctrl` Up/Down |
 | --- | --- | --- | --- | --- |
-| Normal horizontal main axis | Focus columns | Focus windows within a column | Reorder columns | Reorder windows within a column |
-| Vertical main axis | Switch workspaces | Focus vertical columns | Send column to adjacent workspace and follow it | Reorder vertical columns |
+| Normal horizontal main axis | Focus columns | Focus windows within a column | No workspace on this physical axis | Switch vertical workspaces |
+| Vertical main axis | Focus windows within a column | Focus vertical columns | Switch horizontal workspaces | No workspace on this physical axis |
 
-H/J/K/L use the same physical mapping. H/L request a physical monitor fallback
-when the local action cannot move. On a vertical output, Niri's dynamic empty
-workspace may satisfy Left/Right before monitor fallback is reached.
+Shift performs the corresponding move. Workspace moves do not follow the moved
+column. H/J/K/L use the same mapping as arrows. Plain H/J/K/L request a physical
+monitor fallback when the in-workspace action cannot move; `Mod+Alt` remains the
+explicit monitor layer.
 
-This mapping intentionally prioritizes the common portrait hierarchy:
-workspaces horizontally, columns vertically. Direct `focus-window-up/down`
-actions remain available through Niri IPC for multi-window columns but are not
-assigned to the directional keys on `DP-2`.
+The session lock moved from `Mod+Ctrl+L` to `Mod+Ctrl+Delete`, leaving the whole
+`Mod+Ctrl` directional layer available for workspaces.
 
 ## Partial rollback: layout only
 
@@ -249,11 +247,11 @@ After the new session starts:
    version and an expected mismatch warning.
 2. `DP-1` still creates and scrolls columns horizontally.
 3. New windows on `DP-2` occupy half its physical height and scroll vertically.
-4. `Mod+Right` on `DP-2` selects the workspace physically to the right;
-   `Mod+Left` returns to the previous workspace.
-5. `Mod+Up/Down` on `DP-2` traverses vertically stacked columns.
-6. Shift-direction actions move the focused column along the matching physical
-   axis.
+4. `Mod+Ctrl+Right` on `DP-2` selects the workspace physically to the right;
+   `Mod+Ctrl+Left` returns to the previous workspace.
+5. `Mod+Up/Down` on `DP-2` traverses vertically stacked columns without
+   changing workspaces.
+6. Shift-direction actions move within the matching modifier layer.
 7. The same keys retain standard Niri behavior on `DP-1`.
 8. Overview, pointer gestures, wheel navigation, interactive move/resize, and
    screenshot UI follow the selected output axis.
@@ -267,7 +265,7 @@ Activated successfully on Ishimura on 2026-10-17. Live use confirmed:
 - `DP-1` retains the horizontal layout;
 - `DP-2` stacks and scrolls windows vertically;
 - `DP-2` workspaces move horizontally;
-- adaptive Right then Left changed and restored the focused workspace ID
+- adaptive `Mod+Ctrl+Right` then `Mod+Ctrl+Left` changed and restored the focused workspace ID
   (`1 -> 4 -> 1`);
 - overview and input behavior remain usable;
 - window blur and `blur-opacity` remain active.
