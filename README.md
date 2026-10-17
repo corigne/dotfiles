@@ -295,10 +295,12 @@ Useful canonical starting points:
 | `Mod+Shift+Slash` | Open hotkey cheatsheet |
 | `Mod+O` | Toggle overview |
 | `Mod+Q` | Close focused window |
-| `Mod` + H/J/K/L | Focus within workspace, crossing monitors at an edge |
-| `Mod+Shift` + H/L | Move column within workspace, crossing monitors at an edge |
-| `Mod` + arrows or wheel | Focus strictly within workspace |
-| `Mod+Shift` + arrows or wheel | Move strictly within workspace |
+| `Mod` + arrows | Focus by physical direction; on a vertical-main-axis output Left/Right switch workspaces and Up/Down traverse columns |
+| `Mod` + H/J/K/L | Same physical mapping, with monitor fallback when the primary action cannot move |
+| `Mod+Shift` + arrows | Move by physical direction; on a vertical-main-axis output Left/Right send the column to another workspace and Up/Down reorder columns |
+| `Mod+Shift` + H/L | Same horizontal move mapping, with monitor fallback when the primary action cannot move |
+| `Mod` + wheel | Focus along the output's scrolling main axis |
+| `Mod+Shift` + wheel | Move along the output's scrolling main axis |
 | `Mod+Ctrl` + J/K, Up/Down, PageUp/PageDown, U/I, or wheel | Focus workspace |
 | `Mod+Ctrl+Shift` + workspace control | Send column to another workspace without following it |
 | `Mod+Alt` + H/J/K/L, arrows, or wheel | Focus monitor |
@@ -325,6 +327,12 @@ cp ~/.config/niri/local.example.kdl ~/.config/niri/local.kdl
 
 `local.kdl` is ignored by Git and Stow. Keep output names, monitor modes, GPU
 details, touchpad quirks, and TrackPoint settings there.
+
+For every output using `layout { main-axis "vertical" }`, add its connector name
+to the ignored `~/.config/niri/vertical-main-axis-outputs` file, one per line.
+The tracked `niri-physical-direction` dispatcher uses that list to keep arrow
+and HJKL navigation physically oriented. The layout block and companion list
+must change together.
 
 Niri replaces a complete device block when a later included `input` section
 defines the same device type. Keep all effective touchpad options together in
