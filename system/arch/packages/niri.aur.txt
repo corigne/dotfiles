@@ -1,3 +1,4 @@
+maplemono-nf
 noctalia-greeter
 mpvpaper
 tzupdate

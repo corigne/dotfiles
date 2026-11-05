@@ -43,11 +43,13 @@
 resize-overlay-duration = 1s 50ms
 window-inherit-working-directory = false
 
-font-family = 'Maple Mono NF CN'
+font-family = Maple Mono NF
+font-family = Maple Mono NF CN
 font-size = 10
-font-feature = "calt" off
-font-feature = "liga" on
-font-feature = "ss02" on
+font-feature = +calt
+font-feature = +liga
+font-feature = +ss02
+font-shaping-break = no-cursor
 
 window-padding-x = 6
 window-padding-y = 6

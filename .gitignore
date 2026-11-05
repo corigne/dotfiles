@@ -5,3 +5,4 @@
 local.lua
 packages/niri/dot-config/niri/local.kdl
 packages/noctalia/dot-config/noctalia/local.toml
+packages/common/dot-copilot/settings.json.lock

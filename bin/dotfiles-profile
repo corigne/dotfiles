@@ -6,6 +6,7 @@ stow_dir="$repo_dir/packages"
 state_dir=${XDG_STATE_HOME:-"$HOME/.local/state"}/dotfiles
 state_file="$state_dir/profile"
 plan_verbose=0
+generated_file_ignore='settings\.json\.lock$'
 
 usage() {
     cat <<'EOF'
@@ -115,19 +116,25 @@ run_stow() {
             # shellcheck disable=SC2086
             run_stow_preview "Remove packages: $package_list" \
                 stow --simulate --delete --verbose=1 --no-folding --dotfiles \
+                --ignore "$generated_file_ignore" \
                 --dir "$stow_dir" --target "$HOME" $package_list
             ;;
         plan-stow)
             # shellcheck disable=SC2086
             run_stow_preview "Link packages: $package_list" \
                 stow --simulate --stow --verbose=1 --no-folding --dotfiles \
+                --ignore "$generated_file_ignore" \
                 --dir "$stow_dir" --target "$HOME" $package_list
             ;;
         delete)
-            stow --delete --verbose=1 --no-folding --dotfiles --dir "$stow_dir" --target "$HOME" $package_list
+            stow --delete --verbose=1 --no-folding --dotfiles \
+                --ignore "$generated_file_ignore" \
+                --dir "$stow_dir" --target "$HOME" $package_list
             ;;
         stow)
-            stow --stow --verbose=1 --no-folding --dotfiles --dir "$stow_dir" --target "$HOME" $package_list
+            stow --stow --verbose=1 --no-folding --dotfiles \
+                --ignore "$generated_file_ignore" \
+                --dir "$stow_dir" --target "$HOME" $package_list
             ;;
     esac
 }
