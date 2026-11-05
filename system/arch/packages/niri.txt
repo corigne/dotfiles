@@ -8,6 +8,8 @@ xdg-desktop-portal-gtk
 gnome-keyring
 ghostty
 thunar
+tumbler
+libopenraw
 yazi
 brightnessctl
 playerctl

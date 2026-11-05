@@ -9,7 +9,8 @@ state_root=${XDG_STATE_HOME:-"$HOME/.local/state"}/dotfiles/system
 
 usage() {
     cat <<'EOF'
-Usage: desktop-system arch niri <check|plan|apply|verify|activate|remove|rollback>
+Usage: desktop-system arch niri <check|reconcile|plan|apply|verify|activate|remove|rollback>
+       desktop-system arch niri reconcile acknowledge
 
 Only desktop-profile packages, owned root templates, and owned services are
 managed. Unrelated packages and /etc files are never converged or removed.
@@ -24,6 +25,7 @@ aur_manifest="$repo_dir/system/arch/packages/niri.aur.txt"
 profile_state="$state_root/$profile"
 installed_state="$profile_state/installed-packages"
 backup_state="$profile_state/backups"
+reconcile_baseline="$profile_state/reconcile-baseline"
 user_portal_policy=${XDG_CONFIG_HOME:-"$HOME/.config"}/xdg-desktop-portal/niri-portals.conf
 
 require_command() {
@@ -50,6 +52,73 @@ missing_packages() {
     manifest_packages "$manifest" | while IFS= read -r package; do
         pacman -Q "$package" >/dev/null 2>&1 || printf '%s\n' "$package"
     done
+}
+
+package_is_tracked() {
+    wanted=$1
+
+    for manifest in "$native_manifest" "$plasma_manifest" "$aur_manifest"; do
+        while IFS= read -r tracked_package; do
+            [ "$tracked_package" = "$wanted" ] && return 0
+        done <<EOF
+$(manifest_packages "$manifest")
+EOF
+    done
+    return 1
+}
+
+package_is_acknowledged() {
+    [ -f "$reconcile_baseline" ] &&
+        grep -Fqx "$1" "$reconcile_baseline"
+}
+
+print_untracked_explicit_package_names() {
+    {
+        pacman -Qqen
+        pacman -Qqem
+    } | while IFS= read -r reconcile_package; do
+        package_is_tracked "$reconcile_package" ||
+            printf '%s\n' "$reconcile_package"
+    done
+}
+
+print_untracked_explicit_packages() {
+    if [ ! -f "$reconcile_baseline" ]; then
+        printf '%s\n' "No reconciliation baseline recorded."
+        printf '%s\n' "Review this initial report, then run:"
+        printf '%s\n' "  desktop-system arch niri reconcile acknowledge"
+    fi
+
+    printf '%s\n' "Explicit repository packages not tracked by desktop manifests:"
+    pacman -Qqen | while IFS= read -r installed_package; do
+        if ! package_is_tracked "$installed_package" &&
+            ! package_is_acknowledged "$installed_package"
+        then
+            printf '  %s\n' "$installed_package"
+        fi
+    done
+
+    printf '%s\n' "Explicit AUR/foreign packages not tracked by desktop manifests:"
+    pacman -Qqem | while IFS= read -r installed_package; do
+        if ! package_is_tracked "$installed_package" &&
+            ! package_is_acknowledged "$installed_package"
+        then
+            printf '  %s\n' "$installed_package"
+        fi
+    done
+}
+
+acknowledge_untracked_explicit_packages() {
+    mkdir -p "$profile_state"
+    temporary_baseline=$(mktemp "$profile_state/reconcile-baseline.XXXXXX")
+    trap 'rm -f "$temporary_baseline"' 0 HUP INT TERM
+
+    print_untracked_explicit_package_names | sort -u >"$temporary_baseline"
+    mv "$temporary_baseline" "$reconcile_baseline"
+    trap - 0 HUP INT TERM
+
+    printf 'Acknowledged %s untracked explicit packages.\n' \
+        "$(wc -l <"$reconcile_baseline")"
 }
 
 has_battery() {
@@ -430,6 +499,14 @@ case "$action" in
         [ -f "$native_manifest" ]
         [ -f "$plasma_manifest" ]
         [ -f "$aur_manifest" ]
+        ;;
+    reconcile)
+        require_command pacman
+        case "${4:-report}" in
+            report) print_untracked_explicit_packages ;;
+            acknowledge) acknowledge_untracked_explicit_packages ;;
+            *) usage >&2; exit 2 ;;
+        esac
         ;;
     plan)
         require_command pacman

@@ -98,10 +98,26 @@ Other commands:
 
 ```sh
 ./bin/desktop-system arch niri check
+./bin/desktop-system arch niri reconcile
 ./bin/dotfiles-profile status
 ./bin/dotfiles-profile audit niri
 ./bin/dotfiles-profile unstow niri
 ```
+
+`desktop-system arch niri reconcile` lists newly discovered explicitly installed
+repository and AUR/foreign packages missing from all desktop manifests. Review
+the initial report once, then record existing non-profile packages as the local
+baseline:
+
+```sh
+./bin/desktop-system arch niri reconcile acknowledge
+```
+
+Later reconciliation reports contain only explicit packages not tracked or
+previously acknowledged. After bulk `pacman` or `paru` installs, add packages
+that belong to the desktop profile, rerun reconciliation, then acknowledge any
+intentional non-profile packages. Dependencies are excluded unless explicitly
+installed. The baseline is machine-local state, not Git-tracked configuration.
 
 The Niri profile links shared configuration through `common`. The Niri session
 initializes GTK interface and monospace defaults to `Maple Mono NF CN`;
@@ -454,6 +470,9 @@ GNOME and GTK backends; Plasma uses KDE's backend in its own session.
 Thunar remains the default graphical file manager for opening directories, but
 it cannot act as a portal file chooser because it has no chooser mode that
 returns selected paths to the calling application.
+
+Thunar previews use Tumbler. The Niri package manifest includes `libopenraw`,
+which enables Tumbler's RAW thumbnailer for formats such as Nikon NEF.
 
 `desktop-system arch niri apply` archives a legacy per-user
 `~/.config/xdg-desktop-portal/niri-portals.conf` with a timestamped
