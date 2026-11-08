@@ -367,6 +367,14 @@ Ishimura's private portrait-layout experiment, provenance, limitations, and
 two-level rollback are documented in
 [`docs/niri-portrait-layout.md`](docs/niri-portrait-layout.md).
 
+Discord starts through the Niri XDG autostart entry
+`~/.config/autostart/discord-vencord.desktop`. Its launcher bootstraps a missing
+Discord host before restoring the managed Vencord/OpenAsar loader chain.
+
+The 2026-11-08 WoW/VKD3D GPU-reset incident, D3D11 mitigation, validation, and
+rollback are documented in
+[`docs/wow-vkd3d-gpu-reset.md`](docs/wow-vkd3d-gpu-reset.md).
+
 ## Window rules and opacity
 
 Rules live in `~/.config/niri/rules.kdl`.
